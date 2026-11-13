@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" width="100%" height="100%">
+  <defs>
+    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f2fe" />
+      <stop offset="100%" stop-color="#818cf8" />
+    </linearGradient>
+  </defs>
+  <!-- Hexagon Tech Icon -->
+  <polygon points="20,4 32,11 32,25 20,32 8,25 8,11" fill="none" stroke="url(#logoGrad)" stroke-width="2.5"/>
+  <circle cx="20" cy="18" r="4" fill="#00f2fe"/>
+  <!-- Text -->
+  <text x="40" y="24" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="800" fill="#f8fafc" letter-spacing="1">GADGETS<tspan fill="#38bdf8">.TECH</tspan></text>
+</svg>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="E-commerce e Catálogo Interativo de Gadgets Futuristas - Atividade Prática 4º Bimestre">
+  <meta name="author" content="Alexandre, Pedro Franchim, Marcus e Julio">
+  <title>Gadgets Tech • O Futuro Hoje</title>
+  
+  <!-- CSS Puro Sem Frameworks -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/produtos.css">
+  
+  <!-- Favicon SVG -->
+  <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
+</head>
+<body>
+
+  <!-- Cabeçalho / Navbar Principal -->
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="brand-logo" aria-label="Gadgets Tech Home">
+        <img src="assets/img/logo.svg" alt="Logo Gadgets Tech">
+      </a>
+
+      <nav class="main-nav" aria-label="Navegação Principal">
+        <a href="index.html" class="nav-link active">Catálogo</a>
+        <a href="#sobre" class="nav-link">Sobre o Projeto</a>
+        
+        <a href="carrinho.html" class="cart-nav-button" aria-label="Visualizar Carrinho de Compras">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <span>Carrinho</span>
+          <span class="cart-badge" id="nav-cart-badge">0</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Banner Hero Principal -->
+    <section class="hero-section">
+      <div class="container">
+        <div class="hero-tag">Desenvolvimento Web Avançado • 4º Bimestre</div>
+        <h1 class="hero-title">
+          Tecnologia do Amanhã, <br>
+          <span class="gradient-text">Disponível Agora.</span>
+        </h1>
+        <p class="hero-subtitle">
+          Explore o catálogo oficial de dispositivos inteligentes de última geração. Experiência de compra fluida com renderização dinâmica e persistência de dados.
+        </p>
+      </div>
+    </section>
+
+    <!-- Seção de Controles: Busca e Filtros por Categoria -->
+    <section class="catalog-controls-section" aria-label="Filtros e Busca de Produtos">
+      <div class="container">
+        <div class="controls-card">
+          <!-- Linha 1: Input de Busca e Ordenação -->
+          <div class="search-sort-bar">
+            <div class="search-input-wrapper">
+              <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input 
+                type="text" 
+                id="search-input" 
+                class="search-input" 
+                placeholder="Buscar por nome, função ou tecnologia..." 
+                autocomplete="off"
+                aria-label="Buscar produtos no catálogo"
+              >
+              <button type="button" id="clear-search-btn" class="clear-search-btn" title="Limpar busca">&times;</button>
+            </div>
+
+            <div class="sort-wrapper">
+              <label for="sort-select" class="sort-label">Ordenar:</label>
+              <select id="sort-select" class="sort-select">
+                <option value="default">Destaques</option>
+                <option value="price-asc">Menor Preço</option>
+                <option value="price-desc">Maior Preço</option>
+                <option value="rating">Melhor Avaliação</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Linha 2: Filtros por Categoria -->
+          <div class="category-filters" role="group" aria-label="Filtro por categoria">
+            <button type="button" class="filter-btn active" data-category="all">Todos os Produtos</button>
+            <button type="button" class="filter-btn" data-category="Wearables">Wearables</button>
+            <button type="button" class="filter-btn" data-category="Casa Inteligente">Casa Inteligente</button>
+            <button type="button" class="filter-btn" data-category="Áudio Avançado">Áudio Avançado</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção do Catálogo de Produtos -->
+    <section class="catalog-section">
+      <div class="container">
+        <div class="results-bar">
+          <span id="results-count">Carregando catálogo...</span>
+          <span>Entrega rápida para todo o Brasil</span>
+        </div>
+
+        <!-- Grid Renderizado Dinamicamente via JS (DOM) -->
+        <div id="products-grid" class="products-grid" aria-live="polite">
+          <!-- Inserido dinamicamente por main.js -->
+        </div>
+
+        <!-- Estado Vazio (Sem Resultados) -->
+        <div id="no-results" class="no-results" style="display: none;">
+          <div class="no-results-icon">🔍</div>
+          <h3>Nenhum gadget encontrado</h3>
+          <p>Tente ajustar os termos de busca ou remover os filtros de categoria aplicados.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sobre o Projeto Acadêmico -->
+    <section id="sobre" class="container" style="padding-bottom: 4rem;">
+      <div class="controls-card" style="background: rgba(20, 30, 51, 0.6); border: 1px dashed var(--border-subtle);">
+        <h2 style="font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--accent-cyan);">Sobre esta Atividade Prática</h2>
+        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1rem;">
+          Este projeto foi construído respeitando rigorosamente os critérios do 4º Bimestre da disciplina de Desenvolvimento Web (Prof. Danilo Bezerra):
+        </p>
+        <ul style="color: var(--text-secondary); font-size: 0.9rem; padding-left: 1.5rem; line-height: 1.8;">
+          <li><strong>Sem Frameworks:</strong> Desenvolvido exclusivamente com HTML5 semântico, CSS3 puro (Flexbox/CSS Grid responsivo) e JavaScript Vanilla.</li>
+          <li><strong>Renderização Dinâmica:</strong> Os dados dos gadgets são carregados a partir de <code>products.js</code> e manipulados via DOM em <code>main.js</code>.</li>
+          <li><strong>Filtros e Busca em Tempo Real:</strong> Filtragem por categorias e pesquisa textual instantânea.</li>
+          <li><strong>Persistência de Dados:</strong> O carrinho salva automaticamente seus itens e quantidades no <code>localStorage</code> do navegador em <code>cart.js</code>.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- Rodapé -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h4>Gadgets Tech • E-commerce Futurista</h4>
+          <p>Projeto acadêmico de Desenvolvimento Web Avançado focado em boas práticas de programação front-end moderna e arquitetura modular pura.</p>
+        </div>
+
+        <div class="footer-col">
+          <h5>Integrantes do Grupo</h5>
+          <ul class="team-list">
+            <li>Alexandre</li>
+            <li>Pedro Franchim</li>
+            <li>Marcus</li>
+            <li>Julio</li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>Informações Acadêmicas</h5>
+          <ul>
+            <li><strong>Professor:</strong> Danilo Bezerra</li>
+            <li><strong>Disciplina:</strong> Desenv. Web</li>
+            <li><strong>Etapa:</strong> Entrega Parcial (4º Bimestre)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 Gadgets Tech — Desenvolvido pelo grupo de Alexandre, Pedro Franchim, Marcus e Julio.</p>
+        <span class="academic-badge">Prof. Danilo Bezerra • 4º Bimestre</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Container de Toasts Dinâmicos -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Scripts JavaScript (Sem Frameworks / Modular) -->
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

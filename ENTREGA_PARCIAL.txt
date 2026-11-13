@@ -1,0 +1,18 @@
+==================================================
+ATIVIDADE PRÁTICA 4º BIMESTRE - ENTREGA PARCIAL (3 SEMANAS)
+Alunos: Alexandre, Pedro Franchim, Marcus e Julio
+Professor: Danilo Bezerra
+==================================================
+PROJETO: E-commerce e Catálogo Interativo de Gadgets Futuristas
+LINKS DO PROJETO:
+- Site Publicado (GitHub Pages): https://[seu_usuario].github.io/[repositorio]/
+- Repositório do Código (GitHub): https://github.com/[seu_usuario]/[repositorio]
+
+FUNCIONALIDADES CONCLUÍDAS NA ENTREGA PARCIAL:
+1. Interface do catálogo responsiva e moderna em HTML5 e CSS3 puro.
+2. Renderização dinâmica de produtos utilizando JavaScript (DOM).
+3. Sistema de busca em tempo real por nome do produto.
+4. Filtros por categorias (Wearables, Casa Inteligente, Áudio Avançado).
+5. Adição e remoção de itens no carrinho com cálculo total automático.
+6. Persistência de dados do carrinho de compras usando localStorage.
+==================================================
