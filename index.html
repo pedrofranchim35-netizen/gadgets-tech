@@ -174,11 +174,82 @@
     </div>
   </footer>
 
+  <!-- Modal Studio 3D Interativo 360° -->
+  <div id="modal-3d-viewer" class="modal-3d-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-3d-title">
+    <!-- Cabeçalho do Estúdio -->
+    <header class="modal-3d-header">
+      <div class="modal-3d-header-left">
+        <span class="modal-3d-badge">3D STUDIO 360°</span>
+        <div>
+          <span id="modal-3d-category" class="modal-3d-category-tag">Categoria</span>
+          <h2 id="modal-3d-title" class="modal-3d-product-title">Nome do Produto</h2>
+        </div>
+      </div>
+      <button type="button" class="btn-close-3d" onclick="close3DModal()" title="Fechar estúdio 3D">&times;</button>
+    </header>
+
+    <!-- Corpo do Estúdio: Canvas 3D e Sidebar -->
+    <div class="modal-3d-body">
+      <div class="modal-3d-canvas-wrapper">
+        <div id="modal-3d-canvas" class="modal-3d-canvas"></div>
+        
+        <div class="modal-3d-hint">
+          🖱️ Clique e arraste para girar em 360° • Scroll do mouse ou pinça para zoom
+        </div>
+
+        <!-- Toolbar de Controles 3D -->
+        <div class="modal-3d-toolbar">
+          <button type="button" id="btn-toggle-rotate" class="toolbar-btn active" onclick="toggleAutoRotate()">
+            🔄 Rotação: Ligada
+          </button>
+          <button type="button" id="btn-toggle-fx" class="toolbar-btn active" onclick="toggleSpecialEffect()">
+            ⚡ Efeitos Especiais: Ligados
+          </button>
+          <button type="button" class="toolbar-btn" onclick="reset3DCamera()">
+            🎯 Resetar Câmera
+          </button>
+        </div>
+      </div>
+
+      <!-- Painel Lateral de Especificações -->
+      <aside class="modal-3d-sidebar">
+        <div>
+          <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem; color: var(--text-primary);">Inspeção do Dispositivo</h3>
+          <p id="modal-3d-desc" class="modal-3d-desc">Descrição do produto...</p>
+
+          <div class="modal-3d-specs-list">
+            <h5>Engenharia & Arquitetura 3D</h5>
+            <ul>
+              <li>Materiais com Shaders PBR Físicos (Metalness & Roughness)</li>
+              <li>Iluminação de três pontos com reflexos neon dinâmicos</li>
+              <li>Renderização 60 FPS com WebGL e Three.js</li>
+              <li>Simulação física ativa (flutuação, pulso, rotação)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div>
+          <div class="modal-3d-price-box">
+            <span class="price-label">Preço exclusivo</span>
+            <div id="modal-3d-price" class="modal-3d-price-val">R$ 0,00</div>
+          </div>
+
+          <button type="button" id="modal-3d-add-btn" class="btn-checkout" style="width: 100%;">
+            🛒 Adicionar ao Carrinho
+          </button>
+        </div>
+      </aside>
+    </div>
+  </div>
+
   <!-- Container de Toasts Dinâmicos -->
   <div id="toast-container" class="toast-container" aria-live="polite"></div>
 
-  <!-- Scripts JavaScript (Sem Frameworks / Modular) -->
+  <!-- Scripts JavaScript (Three.js 3D + Lógica Front-end) -->
+  <script src="js/three.min.js"></script>
+  <script src="js/OrbitControls.js"></script>
   <script src="js/products.js"></script>
+  <script src="js/models3d.js"></script>
   <script src="js/cart.js"></script>
   <script src="js/main.js"></script>
 </body>

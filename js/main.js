@@ -123,18 +123,34 @@ function renderProductsGrid(items) {
   if (emptyState) emptyState.style.display = 'none';
 
   grid.innerHTML = items.map(product => `
-    <article class="product-card" data-category="${product.category}">
+    <article class="product-card" data-id="${product.id}" data-category="${product.category}">
       <div class="product-card-badge">
         <span class="category-pill">${product.category}</span>
-        <span class="rating-pill">★ ${product.rating.toFixed(1)}</span>
+        <span class="badge-3d">3D REAL</span>
       </div>
 
-      <div class="product-image-wrapper">
-        <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">
+      <div class="product-3d-wrapper">
+        <div class="product-3d-canvas-container" title="Arraste para girar em 3D!"></div>
+        <span class="drag-hint-pill">🖱️ 360° Interativo</span>
+        <button 
+          type="button" 
+          class="btn-inspect-3d" 
+          onclick="open3DModal(${product.id})"
+          title="Abrir no Estúdio 3D Fullscreen"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+          </svg>
+          Studio 3D
+        </button>
       </div>
 
       <div class="product-content">
-        <h3 class="product-title">${product.name}</h3>
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.4rem;">
+          <h3 class="product-title" style="margin-bottom: 0;">${product.name}</h3>
+          <span class="rating-pill">★ ${product.rating.toFixed(1)}</span>
+        </div>
+
         <p class="product-description">${product.description}</p>
 
         <div class="product-features">
@@ -164,6 +180,11 @@ function renderProductsGrid(items) {
       </div>
     </article>
   `).join('');
+
+  // Inicializar os modelos 3D interativos em cada card
+  if (typeof initCard3DViewers === 'function') {
+    initCard3DViewers();
+  }
 }
 
 // Atualizar contador de resultados
