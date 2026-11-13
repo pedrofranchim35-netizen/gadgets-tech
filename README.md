@@ -70,19 +70,21 @@ Aplicação web de comércio eletrônico com temática futurista desenvolvida pa
 
 ---
 
-## 🌐 Como Publicar no GitHub Pages
+## 🌐 Links Oficiais do Projeto
 
-1. Crie um novo repositório no seu GitHub (ex.: `gadgets-tech`).
-2. Faça o upload ou clone estes arquivos na branch `main`:
+- **Site Publicado (GitHub Pages):** [https://pedrofranchim35-netizen.github.io/gadgets-tech/](https://pedrofranchim35-netizen.github.io/gadgets-tech/)
+- **Repositório do Código:** [https://github.com/pedrofranchim35-netizen/gadgets-tech](https://github.com/pedrofranchim35-netizen/gadgets-tech)
+
+---
+
+## 🌐 Como Ativar o GitHub Pages
+
+1. O repositório já está configurado no GitHub:
    ```bash
-   git init
-   git add .
-   git commit -m "feat: entrega parcial da atividade prática - 4 bimestre"
-   git branch -M main
-   git remote add origin https://github.com/[seu_usuario]/gadgets-tech.git
+   git remote add origin https://github.com/pedrofranchim35-netizen/gadgets-tech.git
    git push -u origin main
    ```
-3. No GitHub, acesse **Settings** > **Pages**.
-4. Em **Branch**, selecione `main` e a pasta `/ (root)`. Clique em **Save**.
-5. O link será gerado no formato: `https://[seu_usuario].github.io/gadgets-tech/`.
-6. Preencha os links no arquivo `ENTREGA_PARCIAL.txt` e envie ao professor Danilo Bezerra!
+2. No GitHub, acesse **Settings** > **Pages**: [https://github.com/pedrofranchim35-netizen/gadgets-tech/settings/pages](https://github.com/pedrofranchim35-netizen/gadgets-tech/settings/pages)
+3. Em **Build and deployment** > **Branch**, selecione `main` e a pasta `/ (root)`. Clique em **Save**.
+4. O site estará no ar em poucos segundos em: `https://pedrofranchim35-netizen.github.io/gadgets-tech/`.
+5. O arquivo `ENTREGA_PARCIAL.txt` já está preenchido e pronto para envio ao professor Danilo Bezerra!

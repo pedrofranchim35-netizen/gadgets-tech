@@ -5,8 +5,8 @@ Professor: Danilo Bezerra
 ==================================================
 PROJETO: E-commerce e Catálogo Interativo de Gadgets Futuristas
 LINKS DO PROJETO:
-- Site Publicado (GitHub Pages): https://SEU_USUARIO.github.io/gadgets-tech/
-- Repositório do Código (GitHub): https://github.com/SEU_USUARIO/gadgets-tech
+- Site Publicado (GitHub Pages): https://pedrofranchim35-netizen.github.io/gadgets-tech/
+- Repositório do Código (GitHub): https://github.com/pedrofranchim35-netizen/gadgets-tech
 
 FUNCIONALIDADES CONCLUÍDAS NA ENTREGA PARCIAL:
 1. Interface do catálogo responsiva e moderna em HTML5 e CSS3 puro.
