@@ -1,12 +1,11 @@
 /**
- * Modelos 3D de Alta Precisão Industrial e Detalhes Sofisticados
- * Three.js • PBR Shaders • Studio Lighting • Micro-engenharia
- * Atividade Prática 4º Bimestre - Desenvolvimento Web Avançado
+ * Modelos 3D de Ultra-Precisão Industrial - Revisão de Engenharia Completa
+ * Three.js r128 • PBR Physical Materials • Studio HDRI • Micro-Engenharia
+ * Gadgets Tech - 4º Bimestre
  * Alunos: Alexandre, Pedro Franchim, Marcus e Julio
  * Professor: Danilo Bezerra
  */
 
-// Gerenciador Central de Modelos 3D
 const Gadget3DManager = {
   sharedEnvMap: null,
   activeCardRenderers: new Map(),
@@ -21,1212 +20,1514 @@ const Gadget3DManager = {
   isAutoRotate: true
 };
 
-// ==========================================================================
-// 1. Texturas Procedurais de Ultra-Definição (Telas, Grelhas e HUDs)
-// ==========================================================================
+// ═══════════════════════════════════════════════════════════════════
+// 1. TEXTURAS PROCEDURAIS DE ULTRA-DEFINIÇÃO
+// ═══════════════════════════════════════════════════════════════════
 
-// Sombra de Contato Fotorrealista para a Base
 function createRadialShadowTexture() {
-  const canvas = document.createElement('canvas');
-  canvas.width = 256;
-  canvas.height = 256;
-  const ctx = canvas.getContext('2d');
-
-  const grad = ctx.createRadialGradient(128, 128, 10, 128, 128, 120);
-  grad.addColorStop(0, 'rgba(0, 0, 0, 0.75)');
-  grad.addColorStop(0.3, 'rgba(0, 0, 0, 0.45)');
-  grad.addColorStop(0.7, 'rgba(0, 0, 0, 0.15)');
-  grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, 256, 256);
-
-  const texture = new THREE.CanvasTexture(canvas);
-  return texture;
+  const c = document.createElement('canvas');
+  c.width = 512; c.height = 512;
+  const x = c.getContext('2d');
+  const g = x.createRadialGradient(256, 256, 20, 256, 256, 240);
+  g.addColorStop(0, 'rgba(0,0,0,0.8)');
+  g.addColorStop(0.25, 'rgba(0,0,0,0.5)');
+  g.addColorStop(0.6, 'rgba(0,0,0,0.18)');
+  g.addColorStop(1, 'rgba(0,0,0,0)');
+  x.fillStyle = g;
+  x.fillRect(0, 0, 512, 512);
+  return new THREE.CanvasTexture(c);
 }
 
-// Textura de Tela OLED do Smartwatch (PulseTouch Pro) com Micro-detalhes
-function createSmartwatchScreenCanvas() {
-  const canvas = document.createElement('canvas');
-  canvas.width = 512;
-  canvas.height = 512;
-  const ctx = canvas.getContext('2d');
-
-  function draw(time = 0) {
-    ctx.fillStyle = '#020617';
-    ctx.fillRect(0, 0, 512, 512);
-
-    // Barra de Status Superior
-    ctx.fillStyle = '#94a3b8';
-    ctx.font = 'bold 24px -apple-system, sans-serif';
-    ctx.fillText('10:45', 36, 48);
-
-    // Ícone de Bateria Detalhado
-    ctx.strokeStyle = '#38bdf8';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(390, 28, 64, 28);
-    ctx.fillStyle = '#22c55e';
-    ctx.fillRect(394, 32, 50, 20);
-    ctx.fillRect(456, 36, 5, 12);
-
-    ctx.fillStyle = '#f8fafc';
-    ctx.font = 'bold 16px -apple-system, sans-serif';
-    ctx.fillText('98%', 340, 48);
-
-    // Escala de Frequência e Linhas de Grade de Engenharia
-    ctx.strokeStyle = 'rgba(56, 189, 248, 0.15)';
-    ctx.lineWidth = 1;
-    for (let y = 120; y <= 300; y += 45) {
-      ctx.beginPath();
-      ctx.moveTo(30, y);
-      ctx.lineTo(482, y);
-      ctx.stroke();
-    }
-
-    // Linha de Onda de Frequência Háptica (Osciloscópio Dinâmico)
-    ctx.beginPath();
-    ctx.strokeStyle = '#f97316';
-    ctx.lineWidth = 5;
-    ctx.shadowColor = '#f97316';
-    ctx.shadowBlur = 16;
-
-    const centerY = 210;
-    for (let x = 30; x < 482; x += 3) {
-      const f1 = Math.sin((x * 0.045) + (time * 8.5));
-      const f2 = Math.cos((x * 0.018) + (time * 3.2));
-      const y = centerY + (f1 * f2 * 68);
-      if (x === 30) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-    ctx.shadowBlur = 0;
-
-    // Métricas do Motor Háptico & Sensores
-    ctx.fillStyle = '#f8fafc';
-    ctx.font = 'bold 42px -apple-system, sans-serif';
-    ctx.fillText('4.8G ACT', 36, 365);
-
-    ctx.fillStyle = '#f97316';
-    ctx.font = 'bold 22px -apple-system, sans-serif';
-    ctx.fillText('DUAL HAPTIC CORE', 36, 400);
-
-    ctx.fillStyle = '#94a3b8';
-    ctx.font = '18px monospace';
-    ctx.fillText('FREQ: 240Hz • LATÊNCIA: 1.8ms', 36, 435);
-    ctx.fillText('HR: 72 BPM • SpO2: 99%', 36, 465);
-
-    // Ponto de Status Biométrico Pulsante
-    const alpha = 0.5 + Math.sin(time * 6) * 0.5;
-    ctx.fillStyle = `rgba(34, 197, 94, ${alpha})`;
-    ctx.beginPath();
-    ctx.arc(450, 365, 10, 0, Math.PI * 2);
-    ctx.fill();
+// Textura de Escovação Radial (Para titânio escovado)
+function createBrushedMetalNormal() {
+  const c = document.createElement('canvas');
+  c.width = 256; c.height = 256;
+  const x = c.getContext('2d');
+  x.fillStyle = '#8080ff';
+  x.fillRect(0, 0, 256, 256);
+  x.strokeStyle = 'rgba(128,128,255,0.6)';
+  for (let i = 0; i < 200; i++) {
+    x.lineWidth = 0.3 + Math.random() * 0.8;
+    x.beginPath();
+    const y = Math.random() * 256;
+    x.moveTo(0, y);
+    x.lineTo(256, y + (Math.random() - 0.5) * 4);
+    x.stroke();
   }
-
-  draw(0);
-  const texture = new THREE.CanvasTexture(canvas);
-  return { texture, canvas, draw };
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  return tex;
 }
 
-// Textura do HUD Holográfico dos Óculos (VisionAR Glass)
+// HUD AR dos Óculos com Retículo Tático e Dados de Telemetria
 function createHUDCanvas() {
-  const canvas = document.createElement('canvas');
-  canvas.width = 512;
-  canvas.height = 256;
-  const ctx = canvas.getContext('2d');
+  const c = document.createElement('canvas');
+  c.width = 512; c.height = 256;
+  const x = c.getContext('2d');
 
-  function draw(time = 0) {
-    ctx.clearRect(0, 0, 512, 256);
+  function draw(t = 0) {
+    x.clearRect(0, 0, 512, 256);
 
-    // Horizonte Artificial e Bússola Superior
-    ctx.strokeStyle = 'rgba(56, 189, 248, 0.7)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(170, 35); ctx.lineTo(342, 35);
-    ctx.moveTo(256, 20); ctx.lineTo(256, 35);
-    ctx.stroke();
+    // Bússola e Horizonte Artificial
+    x.strokeStyle = 'rgba(56,189,248,0.6)';
+    x.lineWidth = 1.5;
+    x.beginPath(); x.moveTo(130, 32); x.lineTo(382, 32); x.stroke();
+    // Marcas de Grau na Bússola
+    for (let d = 0; d < 8; d++) {
+      const px = 145 + d * 30 + Math.sin(t * 0.3) * 10;
+      x.fillStyle = 'rgba(56,189,248,0.5)';
+      x.fillRect(px, 28, 1, 8);
+    }
+    x.beginPath(); x.moveTo(256, 18); x.lineTo(256, 32); x.stroke();
+    x.fillStyle = '#00f2fe';
+    x.font = 'bold 14px monospace';
+    x.textAlign = 'center';
+    x.fillText('N 028°', 256, 52);
 
-    ctx.fillStyle = '#00f2fe';
-    ctx.font = 'bold 16px monospace';
-    ctx.textAlign = 'center';
-    ctx.fillText('N 028° • ALT: 742m • 24 KM/H', 256, 60);
+    // Dados de Velocidade e Altitude
+    x.font = '11px monospace';
+    x.fillStyle = 'rgba(148,163,184,0.8)';
+    x.textAlign = 'left';
+    x.fillText('ALT 742m', 35, 52);
+    x.textAlign = 'right';
+    x.fillText('24 km/h', 477, 52);
 
-    // Mira Tática Central / Retículo
-    ctx.strokeStyle = 'rgba(0, 242, 254, 0.4)';
-    ctx.beginPath();
-    ctx.arc(256, 130, 22, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(256, 100); ctx.lineTo(256, 110);
-    ctx.moveTo(256, 150); ctx.lineTo(256, 160);
-    ctx.moveTo(226, 130); ctx.lineTo(236, 130);
-    ctx.moveTo(276, 130); ctx.lineTo(286, 130);
-    ctx.stroke();
+    // Retículo Tático Central
+    x.strokeStyle = 'rgba(0,242,254,0.35)';
+    x.lineWidth = 1;
+    x.beginPath(); x.arc(256, 128, 20, 0, Math.PI * 2); x.stroke();
+    x.beginPath(); x.arc(256, 128, 10, 0, Math.PI * 2); x.stroke();
+    // Cruz do Retículo
+    const cl = 28;
+    x.beginPath();
+    x.moveTo(256 - cl, 128); x.lineTo(256 - 12, 128);
+    x.moveTo(256 + 12, 128); x.lineTo(256 + cl, 128);
+    x.moveTo(256, 128 - cl); x.lineTo(256, 128 - 12);
+    x.moveTo(256, 128 + 12); x.lineTo(256, 128 + cl);
+    x.stroke();
 
-    // Painel de Tradução e Navegação GPS
-    ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
-    ctx.strokeStyle = '#00f2fe';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.roundRect(30, 95, 452, 70, 8);
-    ctx.fill();
-    ctx.stroke();
+    // Painel de Tradução/GPS
+    x.fillStyle = 'rgba(15,23,42,0.8)';
+    x.strokeStyle = 'rgba(0,242,254,0.5)';
+    x.lineWidth = 1.5;
+    x.beginPath(); x.roundRect(30, 165, 452, 55, 6); x.fill(); x.stroke();
 
-    ctx.fillStyle = '#38bdf8';
-    ctx.font = 'bold 17px -apple-system, sans-serif';
-    ctx.textAlign = 'left';
-    ctx.fillText('GPS AR ➔ RUA DA INOVAÇÃO, 200m', 48, 122);
+    // Cantos iluminados do painel
+    x.fillStyle = '#00f2fe';
+    x.fillRect(32, 167, 8, 2);
+    x.fillRect(32, 167, 2, 8);
+    x.fillRect(472, 167, 8, 2);
+    x.fillRect(480, 167, 2, 8);
 
-    ctx.fillStyle = '#f8fafc';
-    ctx.font = '15px -apple-system, sans-serif';
-    ctx.fillText('EN ➔ PT: "Turn right at the tech hub"', 48, 148);
+    x.fillStyle = '#38bdf8';
+    x.font = 'bold 13px -apple-system, sans-serif';
+    x.textAlign = 'left';
+    x.fillText('NAV ➔ RUA DA INOVAÇÃO, 200m', 48, 188);
+    x.fillStyle = '#e2e8f0';
+    x.font = '12px -apple-system, sans-serif';
+    x.fillText('EN ➔ PT: "Turn right at the tech hub"', 48, 208);
 
-    // Status do Sensor e Wi-Fi
-    const alpha = 0.5 + Math.sin(time * 5) * 0.5;
-    ctx.fillStyle = `rgba(34, 197, 94, ${alpha})`;
-    ctx.beginPath();
-    ctx.arc(456, 122, 7, 0, Math.PI * 2);
-    ctx.fill();
-  }
+    // Indicador de sinal pulsante
+    const a = 0.4 + Math.sin(t * 5) * 0.6;
+    x.fillStyle = `rgba(34,197,94,${a})`;
+    x.beginPath(); x.arc(462, 192, 5, 0, Math.PI * 2); x.fill();
 
-  draw(0);
-  const texture = new THREE.CanvasTexture(canvas);
-  return { texture, canvas, draw };
-}
-
-// Textura de Micro-grelha Acústica
-function createMicroGrilleTexture() {
-  const canvas = document.createElement('canvas');
-  canvas.width = 128;
-  canvas.height = 128;
-  const ctx = canvas.getContext('2d');
-
-  ctx.fillStyle = '#1e293b';
-  ctx.fillRect(0, 0, 128, 128);
-
-  ctx.fillStyle = '#090d16';
-  for (let y = 3; y < 128; y += 6) {
-    for (let x = 3; x < 128; x += 6) {
-      ctx.beginPath();
-      ctx.arc(x, y, 1.8, 0, Math.PI * 2);
-      ctx.fill();
+    // Barras de Sinal Wi-Fi
+    x.strokeStyle = `rgba(34,197,94,${0.5 + a * 0.5})`;
+    x.lineWidth = 1.5;
+    for (let i = 0; i < 3; i++) {
+      x.beginPath();
+      x.arc(462, 192, 10 + i * 5, -Math.PI * 0.75, -Math.PI * 0.25);
+      x.stroke();
     }
   }
 
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.wrapS = THREE.RepeatWrapping;
-  texture.wrapT = THREE.RepeatWrapping;
-  texture.repeat.set(6, 3);
-  return texture;
+  draw(0);
+  const tex = new THREE.CanvasTexture(c);
+  return { texture: tex, canvas: c, draw };
 }
 
-// Textura OLED da Garrafa (HydroSmart)
+// Tela OLED do PulseTouch Pro com EKG e Dados Biométricos
+function createSmartwatchScreenCanvas() {
+  const c = document.createElement('canvas');
+  c.width = 512; c.height = 512;
+  const x = c.getContext('2d');
+
+  function draw(t = 0) {
+    x.fillStyle = '#020617';
+    x.fillRect(0, 0, 512, 512);
+
+    // Status Bar
+    x.fillStyle = '#94a3b8';
+    x.font = 'bold 22px -apple-system, sans-serif';
+    x.fillText('10:45', 32, 44);
+    x.font = '14px -apple-system, sans-serif';
+    x.fillText('SEX', 110, 44);
+
+    // Ícones de Status
+    x.strokeStyle = '#38bdf8'; x.lineWidth = 2;
+    x.strokeRect(420, 26, 52, 24);
+    x.fillStyle = '#22c55e';
+    x.fillRect(424, 30, 40, 16);
+    x.fillRect(474, 33, 4, 10);
+
+    // Bluetooth e NFC badges
+    x.fillStyle = '#38bdf8';
+    x.font = 'bold 12px sans-serif';
+    x.fillText('BT', 370, 44);
+    x.fillText('NFC', 398, 44);
+
+    // Separador
+    x.strokeStyle = 'rgba(56,189,248,0.2)';
+    x.lineWidth = 1;
+    x.beginPath(); x.moveTo(30, 60); x.lineTo(482, 60); x.stroke();
+
+    // Cardiograma / EKG Realístico
+    x.strokeStyle = 'rgba(56,189,248,0.12)';
+    for (let y = 100; y <= 280; y += 45) {
+      x.beginPath(); x.moveTo(30, y); x.lineTo(482, y); x.stroke();
+    }
+
+    x.beginPath();
+    x.strokeStyle = '#f97316';
+    x.lineWidth = 4;
+    x.shadowColor = '#f97316';
+    x.shadowBlur = 12;
+
+    const cy = 190;
+    for (let px = 30; px < 482; px += 2) {
+      const phase = ((px - 30) / 452) * Math.PI * 6 + t * 8;
+      const mod = Math.sin(phase * 0.15);
+      // QRS complex spike pattern
+      let val = Math.sin(phase) * 15 * mod;
+      const qrs = phase % (Math.PI * 2);
+      if (qrs > 2.8 && qrs < 3.0) val = -65;
+      else if (qrs > 3.0 && qrs < 3.15) val = 80;
+      else if (qrs > 3.15 && qrs < 3.35) val = -30;
+
+      const y = cy + val;
+      if (px === 30) x.moveTo(px, y);
+      else x.lineTo(px, y);
+    }
+    x.stroke();
+    x.shadowBlur = 0;
+
+    // HR Reading
+    x.fillStyle = '#f8fafc';
+    x.font = 'bold 48px -apple-system, sans-serif';
+    const bpm = 72 + Math.round(Math.sin(t * 2) * 3);
+    x.fillText(`${bpm}`, 32, 350);
+    x.fillStyle = '#f97316';
+    x.font = 'bold 18px -apple-system, sans-serif';
+    x.fillText('BPM', 140, 350);
+
+    // Ícone de coração pulsante
+    const hScale = 1 + Math.sin(t * 6) * 0.15;
+    x.fillStyle = '#ef4444';
+    x.font = `${Math.round(22 * hScale)}px sans-serif`;
+    x.fillText('♥', 150, 330);
+
+    // Dados Hápticos
+    x.fillStyle = '#94a3b8';
+    x.font = '16px monospace';
+    x.fillText('HAPTIC  4.8G  240Hz  1.8ms', 32, 395);
+
+    // SpO2 e Temperatura
+    x.fillStyle = '#38bdf8';
+    x.font = 'bold 16px -apple-system, sans-serif';
+    x.fillText('SpO2: 99%', 32, 430);
+    x.fillText('TEMP: 36.5°C', 32, 455);
+
+    // Indicador de status
+    x.fillStyle = `rgba(34,197,94,${0.5 + Math.sin(t * 6) * 0.5})`;
+    x.beginPath(); x.arc(460, 340, 8, 0, Math.PI * 2); x.fill();
+
+    // Progress ring para calorias
+    x.strokeStyle = 'rgba(249,115,22,0.2)';
+    x.lineWidth = 8;
+    x.beginPath(); x.arc(430, 430, 36, 0, Math.PI * 2); x.stroke();
+    x.strokeStyle = '#f97316';
+    x.lineCap = 'round';
+    x.beginPath(); x.arc(430, 430, 36, -Math.PI / 2, Math.PI * 1.2); x.stroke();
+    x.fillStyle = '#f8fafc';
+    x.font = 'bold 14px -apple-system, sans-serif';
+    x.textAlign = 'center';
+    x.fillText('CAL', 430, 428);
+    x.fillText('486', 430, 446);
+    x.textAlign = 'left';
+  }
+
+  draw(0);
+  const tex = new THREE.CanvasTexture(c);
+  return { texture: tex, canvas: c, draw };
+}
+
+// Micro-grelha Acústica Ultra-Definição
+function createMicroGrilleTexture() {
+  const c = document.createElement('canvas');
+  c.width = 256; c.height = 256;
+  const x = c.getContext('2d');
+  x.fillStyle = '#1a2744';
+  x.fillRect(0, 0, 256, 256);
+  x.fillStyle = '#060a12';
+  for (let y = 2; y < 256; y += 5) {
+    for (let cx = 2; cx < 256; cx += 5) {
+      x.beginPath();
+      x.arc(cx + (y % 10 === 2 ? 2.5 : 0), y, 1.6, 0, Math.PI * 2);
+      x.fill();
+    }
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(8, 4);
+  return tex;
+}
+
+// OLED da Garrafa HydroSmart
 function createBottleOLEDTexture() {
-  const canvas = document.createElement('canvas');
-  canvas.width = 256;
-  canvas.height = 256;
-  const ctx = canvas.getContext('2d');
+  const c = document.createElement('canvas');
+  c.width = 256; c.height = 256;
+  const x = c.getContext('2d');
+  x.fillStyle = '#020617';
+  x.fillRect(0, 0, 256, 256);
 
-  ctx.fillStyle = '#020617';
-  ctx.fillRect(0, 0, 256, 256);
+  // Ring gauge
+  x.strokeStyle = 'rgba(56,189,248,0.15)';
+  x.lineWidth = 12;
+  x.beginPath(); x.arc(128, 128, 100, 0, Math.PI * 2); x.stroke();
+  x.strokeStyle = '#00f2fe';
+  x.lineWidth = 12;
+  x.lineCap = 'round';
+  x.beginPath(); x.arc(128, 128, 100, -Math.PI / 2, Math.PI * 0.92); x.stroke();
 
-  // Anel Circular Graduado de Meta
-  ctx.strokeStyle = 'rgba(56, 189, 248, 0.2)';
-  ctx.lineWidth = 14;
-  ctx.beginPath();
-  ctx.arc(128, 128, 98, 0, Math.PI * 2);
-  ctx.stroke();
+  // Tick marks
+  x.strokeStyle = 'rgba(56,189,248,0.3)';
+  x.lineWidth = 2;
+  for (let i = 0; i < 12; i++) {
+    const a = (i / 12) * Math.PI * 2 - Math.PI / 2;
+    x.beginPath();
+    x.moveTo(128 + Math.cos(a) * 88, 128 + Math.sin(a) * 88);
+    x.lineTo(128 + Math.cos(a) * 94, 128 + Math.sin(a) * 94);
+    x.stroke();
+  }
 
-  ctx.strokeStyle = '#00f2fe';
-  ctx.lineWidth = 14;
-  ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.arc(128, 128, 98, -Math.PI / 2, Math.PI * 0.95);
-  ctx.stroke();
+  x.fillStyle = '#f8fafc';
+  x.font = 'bold 40px -apple-system, sans-serif';
+  x.textAlign = 'center';
+  x.fillText('21°C', 128, 118);
+  x.fillStyle = '#38bdf8';
+  x.font = 'bold 17px -apple-system, sans-serif';
+  x.fillText('99.9% PURA', 128, 152);
+  x.fillStyle = '#a855f7';
+  x.font = 'bold 13px -apple-system, sans-serif';
+  x.fillText('UV-C ESTERILIZADO', 128, 178);
 
-  // Dados
-  ctx.fillStyle = '#f8fafc';
-  ctx.font = 'bold 44px -apple-system, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText('21°C', 128, 122);
+  // Ícone gota de água
+  x.fillStyle = '#38bdf8';
+  x.font = '16px sans-serif';
+  x.fillText('💧 1.8L / 2.5L', 128, 205);
 
-  ctx.fillStyle = '#38bdf8';
-  ctx.font = 'bold 20px -apple-system, sans-serif';
-  ctx.fillText('99.9% PURA', 128, 158);
-
-  ctx.fillStyle = '#a855f7';
-  ctx.font = 'bold 15px -apple-system, sans-serif';
-  ctx.fillText('UV-C ESTERILIZADO', 128, 184);
-
-  const texture = new THREE.CanvasTexture(canvas);
-  return texture;
+  return new THREE.CanvasTexture(c);
 }
 
-// ==========================================================================
-// 2. Iluminação de Estúdio Fotorrealista (Studio Environment Map)
-// ==========================================================================
+// Textura de Logo "GT" Gravada
+function createLogoEngravingTexture() {
+  const c = document.createElement('canvas');
+  c.width = 128; c.height = 64;
+  const x = c.getContext('2d');
+  x.fillStyle = 'rgba(0,0,0,0)';
+  x.fillRect(0, 0, 128, 64);
+  x.fillStyle = 'rgba(56,189,248,0.5)';
+  x.font = 'bold 28px -apple-system, sans-serif';
+  x.textAlign = 'center';
+  x.fillText('GT', 64, 40);
+  const tex = new THREE.CanvasTexture(c);
+  tex.needsUpdate = true;
+  return tex;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 2. STUDIO ENVIRONMENT MAP & MATERIAIS PBR AVANÇADOS
+// ═══════════════════════════════════════════════════════════════════
 
 function getOrCreateStudioEnvironment(renderer) {
   if (Gadget3DManager.sharedEnvMap) return Gadget3DManager.sharedEnvMap;
 
-  const canvas = document.createElement('canvas');
-  canvas.width = 512;
-  canvas.height = 256;
-  const ctx = canvas.getContext('2d');
+  const c = document.createElement('canvas');
+  c.width = 1024; c.height = 512;
+  const x = c.getContext('2d');
 
-  const bgGrad = ctx.createLinearGradient(0, 0, 0, 256);
-  bgGrad.addColorStop(0, '#111827');
-  bgGrad.addColorStop(0.5, '#0b0f19');
-  bgGrad.addColorStop(1, '#030712');
-  ctx.fillStyle = bgGrad;
-  ctx.fillRect(0, 0, 512, 256);
+  // Background escuro de estúdio
+  const bg = x.createLinearGradient(0, 0, 0, 512);
+  bg.addColorStop(0, '#0e1525');
+  bg.addColorStop(0.5, '#080c16');
+  bg.addColorStop(1, '#030712');
+  x.fillStyle = bg;
+  x.fillRect(0, 0, 1024, 512);
 
-  // Softbox de Teto Principal
-  const softbox1 = ctx.createRadialGradient(256, 35, 5, 256, 35, 120);
-  softbox1.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
-  softbox1.addColorStop(0.5, 'rgba(224, 242, 254, 0.5)');
-  softbox1.addColorStop(1, 'rgba(0, 0, 0, 0)');
-  ctx.fillStyle = softbox1;
-  ctx.fillRect(100, 0, 312, 110);
+  // Softbox principal superior (grande, difusa, branca)
+  const s1 = x.createRadialGradient(512, 60, 10, 512, 60, 200);
+  s1.addColorStop(0, 'rgba(255,255,255,0.98)');
+  s1.addColorStop(0.4, 'rgba(240,249,255,0.6)');
+  s1.addColorStop(1, 'rgba(0,0,0,0)');
+  x.fillStyle = s1;
+  x.fillRect(200, 0, 624, 180);
 
-  // Softbox Lateral Ciano
-  const softbox2 = ctx.createRadialGradient(60, 100, 2, 60, 100, 80);
-  softbox2.addColorStop(0, 'rgba(56, 189, 248, 0.9)');
-  softbox2.addColorStop(1, 'rgba(0, 0, 0, 0)');
-  ctx.fillStyle = softbox2;
-  ctx.fillRect(0, 30, 140, 140);
+  // Key light lateral ciano (esquerda)
+  const s2 = x.createRadialGradient(100, 200, 5, 100, 200, 130);
+  s2.addColorStop(0, 'rgba(56,189,248,0.95)');
+  s2.addColorStop(0.6, 'rgba(14,165,233,0.4)');
+  s2.addColorStop(1, 'rgba(0,0,0,0)');
+  x.fillStyle = s2;
+  x.fillRect(0, 70, 250, 260);
 
-  // Softbox Lateral Violeta
-  const softbox3 = ctx.createRadialGradient(450, 100, 2, 450, 100, 80);
-  softbox3.addColorStop(0, 'rgba(192, 132, 252, 0.85)');
-  softbox3.addColorStop(1, 'rgba(0, 0, 0, 0)');
-  ctx.fillStyle = softbox3;
-  ctx.fillRect(370, 30, 142, 140);
+  // Rim light violeta (direita)
+  const s3 = x.createRadialGradient(920, 200, 5, 920, 200, 130);
+  s3.addColorStop(0, 'rgba(192,132,252,0.9)');
+  s3.addColorStop(0.6, 'rgba(168,85,247,0.35)');
+  s3.addColorStop(1, 'rgba(0,0,0,0)');
+  x.fillStyle = s3;
+  x.fillRect(774, 70, 250, 260);
 
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
-  ctx.fillRect(0, 128, 512, 2);
+  // Fill light inferior (quente)
+  const s4 = x.createRadialGradient(512, 460, 10, 512, 460, 160);
+  s4.addColorStop(0, 'rgba(251,191,36,0.25)');
+  s4.addColorStop(1, 'rgba(0,0,0,0)');
+  x.fillStyle = s4;
+  x.fillRect(300, 340, 424, 172);
 
-  const pmremGenerator = new THREE.PMREMGenerator(renderer);
-  pmremGenerator.compileEquirectangularShader();
-  const canvasTexture = new THREE.CanvasTexture(canvas);
-  canvasTexture.mapping = THREE.EquirectangularReflectionMapping;
+  // Reflexo de horizonte
+  x.fillStyle = 'rgba(255,255,255,0.12)';
+  x.fillRect(0, 255, 1024, 3);
 
-  const envMap = pmremGenerator.fromEquirectangular(canvasTexture).texture;
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  pmrem.compileEquirectangularShader();
+  const ct = new THREE.CanvasTexture(c);
+  ct.mapping = THREE.EquirectangularReflectionMapping;
+  const envMap = pmrem.fromEquirectangular(ct).texture;
   Gadget3DManager.sharedEnvMap = envMap;
-  pmremGenerator.dispose();
+  pmrem.dispose();
   return envMap;
 }
 
-// Materiais Físicos (PBR) com Micro-detalhes de Manufatura
-function createRealisticPBRMaterials() {
+function createPBRMaterials() {
+  const brushedNorm = createBrushedMetalNormal();
+
   return {
-    brushedTitaniumDark: new THREE.MeshStandardMaterial({
-      color: 0x1e2433,
-      metalness: 0.92,
-      roughness: 0.25
+    // Titânio Escovado Espacial (Chassis)
+    titaniumDark: new THREE.MeshPhysicalMaterial({
+      color: 0x1c2535,
+      metalness: 0.94,
+      roughness: 0.22,
+      clearcoat: 0.3,
+      clearcoatRoughness: 0.15,
+      normalMap: brushedNorm,
+      normalScale: new THREE.Vector2(0.15, 0.15)
     }),
-    polishedTitanium: new THREE.MeshStandardMaterial({
-      color: 0xd1d5db,
-      metalness: 0.98,
-      roughness: 0.08
-    }),
-    polishedChrome: new THREE.MeshStandardMaterial({
-      color: 0xffffff,
+    // Titânio Polido Espelhado (Biseis e Anéis)
+    titaniumPolished: new THREE.MeshPhysicalMaterial({
+      color: 0xd4d8de,
       metalness: 0.99,
-      roughness: 0.04
+      roughness: 0.06,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.02,
+      reflectivity: 1
     }),
-    gold24k: new THREE.MeshStandardMaterial({
-      color: 0xf59e0b,
-      metalness: 0.95,
-      roughness: 0.15
+    // Cromo Espelhado Puro
+    chrome: new THREE.MeshPhysicalMaterial({
+      color: 0xffffff,
+      metalness: 1.0,
+      roughness: 0.02,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.01,
+      reflectivity: 1
     }),
-    anodizedAluminum: new THREE.MeshStandardMaterial({
-      color: 0x0f172a,
-      metalness: 0.88,
-      roughness: 0.35
+    // Ouro 24k Polido
+    gold: new THREE.MeshPhysicalMaterial({
+      color: 0xf5a623,
+      metalness: 0.98,
+      roughness: 0.12,
+      clearcoat: 0.8,
+      clearcoatRoughness: 0.05
     }),
-    sapphireGlass: new THREE.MeshPhysicalMaterial({
+    // Alumínio Anodizado Espacial
+    aluminum: new THREE.MeshPhysicalMaterial({
+      color: 0x0e1629,
+      metalness: 0.9,
+      roughness: 0.32,
+      clearcoat: 0.5,
+      clearcoatRoughness: 0.1
+    }),
+    // Vidro de Safira Fotorrealista
+    sapphire: new THREE.MeshPhysicalMaterial({
       color: 0x38bdf8,
-      metalness: 0.05,
-      roughness: 0.03,
+      metalness: 0.02,
+      roughness: 0.02,
       transmission: 0.92,
       transparent: true,
-      opacity: 0.88,
-      reflectivity: 0.95,
+      opacity: 0.9,
       clearcoat: 1.0,
-      clearcoatRoughness: 0.03,
-      ior: 1.54
+      clearcoatRoughness: 0.02,
+      ior: 1.77,
+      reflectivity: 0.9
     }),
-    siliconeClear: new THREE.MeshPhysicalMaterial({
-      color: 0xe2e8f0,
-      roughness: 0.25,
-      transmission: 0.8,
+    // Vidro Transparente Puro
+    glassClear: new THREE.MeshPhysicalMaterial({
+      color: 0xffffff,
+      metalness: 0.0,
+      roughness: 0.02,
+      transmission: 0.95,
       transparent: true,
-      opacity: 0.75,
+      opacity: 0.92,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.01,
+      ior: 1.52
+    }),
+    // Silicone Médico Translúcido
+    silicone: new THREE.MeshPhysicalMaterial({
+      color: 0xe2e8f0,
+      roughness: 0.3,
+      transmission: 0.75,
+      transparent: true,
+      opacity: 0.7,
       ior: 1.4
     }),
-    matteRubber: new THREE.MeshStandardMaterial({
-      color: 0x0f172a,
-      metalness: 0.1,
-      roughness: 0.75
+    // Fluorelastômero Fosco (Pulseiras)
+    rubber: new THREE.MeshPhysicalMaterial({
+      color: 0x0d1117,
+      metalness: 0.05,
+      roughness: 0.72,
+      clearcoat: 0.05
     }),
-    blackOLEDGlass: new THREE.MeshStandardMaterial({
-      color: 0x020617,
-      metalness: 0.85,
-      roughness: 0.08
+    // Cerâmica Zircônia (Traseira Smartwatch)
+    ceramic: new THREE.MeshPhysicalMaterial({
+      color: 0x0a0f1a,
+      metalness: 0.3,
+      roughness: 0.15,
+      clearcoat: 0.9,
+      clearcoatRoughness: 0.04
     }),
+    // OLED Profundo (Telas desligadas)
+    oledBlack: new THREE.MeshPhysicalMaterial({
+      color: 0x010309,
+      metalness: 0.7,
+      roughness: 0.06,
+      clearcoat: 0.8,
+      clearcoatRoughness: 0.03
+    }),
+    // Emissores Luminosos
     neonCyan: new THREE.MeshStandardMaterial({
-      color: 0x00f2fe,
-      emissive: 0x00f2fe,
-      emissiveIntensity: 2.2,
-      roughness: 0.1
+      color: 0x00f2fe, emissive: 0x00f2fe, emissiveIntensity: 2.4, roughness: 0.1
     }),
     neonOrange: new THREE.MeshStandardMaterial({
-      color: 0xf97316,
-      emissive: 0xf97316,
-      emissiveIntensity: 2.2,
-      roughness: 0.1
+      color: 0xf97316, emissive: 0xf97316, emissiveIntensity: 2.4, roughness: 0.1
     }),
     neonPurple: new THREE.MeshStandardMaterial({
-      color: 0xa855f7,
-      emissive: 0xa855f7,
-      emissiveIntensity: 2.0,
-      roughness: 0.1
+      color: 0xa855f7, emissive: 0xa855f7, emissiveIntensity: 2.0, roughness: 0.1
     }),
     neonGreen: new THREE.MeshStandardMaterial({
-      color: 0x22c55e,
-      emissive: 0x22c55e,
-      emissiveIntensity: 1.8
-    })
+      color: 0x22c55e, emissive: 0x22c55e, emissiveIntensity: 2.0
+    }),
+    neonRed: new THREE.MeshStandardMaterial({
+      color: 0xef4444, emissive: 0xef4444, emissiveIntensity: 1.8
+    }),
+    // Gap/Junção Escura (Linhas de Painel)
+    panelGap: new THREE.MeshBasicMaterial({ color: 0x000000 })
   };
 }
 
-// Adicionar Sombra de Contato Suave
-function addContactShadow(group, y = -1.8, radius = 2.4, opacity = 0.5) {
-  const geo = new THREE.PlaneGeometry(radius * 2, radius * 2);
-  const mat = new THREE.MeshBasicMaterial({
+function addContactShadow(grp, y = -1.8, r = 2.4, op = 0.5) {
+  const g = new THREE.PlaneGeometry(r * 2, r * 2);
+  const m = new THREE.MeshBasicMaterial({
     map: createRadialShadowTexture(),
-    transparent: true,
-    opacity: opacity,
-    depthWrite: false
+    transparent: true, opacity: op, depthWrite: false
   });
-  const mesh = new THREE.Mesh(geo, mat);
+  const mesh = new THREE.Mesh(g, m);
   mesh.rotation.x = -Math.PI / 2;
   mesh.position.y = y;
-  group.add(mesh);
-  return mesh;
+  grp.add(mesh);
 }
 
-// Micro-parafuso Torx / Pentalobe Mecânico
-function createMicroScrew(mat) {
-  const screwGroup = new THREE.Group();
-  const headGeo = new THREE.CylinderGeometry(0.045, 0.045, 0.03, 16);
-  const head = new THREE.Mesh(headGeo, mat);
-  screwGroup.add(head);
-
-  // Ranhura da cabeça
-  const slotGeo = new THREE.BoxGeometry(0.065, 0.015, 0.012);
-  const slotMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
-  const slot = new THREE.Mesh(slotGeo, slotMat);
-  slot.position.y = 0.015;
-  screwGroup.add(slot);
-
-  return screwGroup;
+// Micro-parafuso Torx com Ranhura em Estrela
+function makeScrew(mat) {
+  const g = new THREE.Group();
+  const head = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.025, 16), mat);
+  g.add(head);
+  // Ranhura em +
+  const sl = new THREE.MeshBasicMaterial({ color: 0x000000 });
+  const s1 = new THREE.Mesh(new THREE.BoxGeometry(0.055, 0.01, 0.01), sl);
+  s1.position.y = 0.013;
+  g.add(s1);
+  const s2 = new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.01, 0.055), sl);
+  s2.position.y = 0.013;
+  g.add(s2);
+  return g;
 }
 
-// ==========================================================================
-// 3. Modelos 3D com Micro-Detalhes de Luxo Industrial
-// ==========================================================================
+// Linha de Painel / Junta entre Componentes
+function makePanelLine(w, h, d) {
+  return new THREE.Mesh(new THREE.BoxGeometry(w, h, d), new THREE.MeshBasicMaterial({ color: 0x020408 }));
+}
 
-// --------------------------------------------------------------------------
-// GADGET 1: VisionAR Glass (Óculos AR com Micro-parafusos, Nosepads e Câmeras)
-// --------------------------------------------------------------------------
+// ═══════════════════════════════════════════════════════════════════
+// 3. MODELOS 3D DE ULTRA-PRECISÃO INDUSTRIAL
+// ═══════════════════════════════════════════════════════════════════
+
+// ─────────────────────────────────────────────────────────────────
+// GADGET 1: VisionAR Glass
+// ─────────────────────────────────────────────────────────────────
 function buildVisionARModel() {
-  const group = new THREE.Group();
-  const mat = createRealisticPBRMaterials();
-  const hudController = createHUDCanvas();
+  const G = new THREE.Group();
+  const M = createPBRMaterials();
+  const hud = createHUDCanvas();
 
-  // 1. Armação Superior Aerodinâmica com Bisel Duplo
+  // === Armação Frontal com Perfil Aerodinâmico ===
   const browShape = new THREE.Shape();
-  browShape.moveTo(-3.0, 0.55);
-  browShape.quadraticCurveTo(0, 0.9, 3.0, 0.55);
-  browShape.lineTo(2.9, 0.15);
-  browShape.quadraticCurveTo(0, 0.55, -2.9, 0.15);
+  browShape.moveTo(-3.1, 0.58);
+  browShape.bezierCurveTo(-1.5, 1.0, 1.5, 1.0, 3.1, 0.58);
+  browShape.lineTo(3.0, 0.12);
+  browShape.bezierCurveTo(1.5, 0.58, -1.5, 0.58, -3.0, 0.12);
   browShape.closePath();
-
-  const browExtrude = { depth: 0.35, bevelEnabled: true, bevelSegments: 4, steps: 2, bevelSize: 0.06, bevelThickness: 0.06 };
-  const browGeo = new THREE.ExtrudeGeometry(browShape, browExtrude);
-  const browMesh = new THREE.Mesh(browGeo, mat.brushedTitaniumDark);
-  browMesh.castShadow = true;
-  group.add(browMesh);
-
-  // Friso Cromado de Destaque Superior
-  const trimGeo = new THREE.TorusGeometry(2.95, 0.02, 12, 60, Math.PI * 0.9);
-  trimGeo.rotateZ(Math.PI * 0.05);
-  const trim = new THREE.Mesh(trimGeo, mat.polishedChrome);
-  trim.position.set(0, 0.65, 0.35);
-  group.add(trim);
-
-  // 2. Pontilhão Central com Câmera Dupla Estereoscópica e LiDAR
-  const bridgeGeo = new THREE.BoxGeometry(0.55, 0.38, 0.38);
-  const bridge = new THREE.Mesh(bridgeGeo, mat.polishedTitanium);
-  bridge.position.set(0, 0.45, 0.18);
-  group.add(bridge);
-
-  // Câmera Esquerda & Direita no Chassi
-  for (let s of [-1, 1]) {
-    // Aro Cromado da Câmera
-    const camRingGeo = new THREE.CylinderGeometry(0.09, 0.09, 0.08, 16);
-    camRingGeo.rotateX(Math.PI / 2);
-    const camRing = new THREE.Mesh(camRingGeo, mat.polishedChrome);
-    camRing.position.set(s * 2.55, 0.35, 0.4);
-    group.add(camRing);
-
-    // Lente de Safira da Câmera
-    const camLensGeo = new THREE.SphereGeometry(0.06, 16, 16);
-    const camLens = new THREE.Mesh(camLensGeo, mat.blackOLEDGlass);
-    camLens.position.set(s * 2.55, 0.35, 0.44);
-    group.add(camLens);
-
-    // Microfone Estéreo Pinhole
-    const micGeo = new THREE.CylinderGeometry(0.025, 0.025, 0.05, 12);
-    micGeo.rotateX(Math.PI / 2);
-    const mic = new THREE.Mesh(micGeo, mat.blackOLEDGlass);
-    mic.position.set(s * 0.4, 0.55, 0.38);
-    group.add(mic);
-  }
-
-  // 3. Apoios Nasais Ergonômicos em Silicone com Braços de Titânio
-  for (let s of [-1, 1]) {
-    // Braço de arame de titânio
-    const armGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.35, 12);
-    const arm = new THREE.Mesh(armGeo, mat.polishedTitanium);
-    arm.position.set(s * 0.35, 0.1, 0.05);
-    arm.rotation.z = s * 0.35;
-    group.add(arm);
-
-    // Almofada de Silicone Translúcida
-    const padGeo = new THREE.BoxGeometry(0.18, 0.32, 0.08);
-    const pad = new THREE.Mesh(padGeo, mat.siliconeClear);
-    pad.position.set(s * 0.45, -0.05, 0.05);
-    pad.rotation.y = s * 0.25;
-    group.add(pad);
-  }
-
-  // 4. Lentes Duplas Curvadas Envolventes com Refração
-  const leftLensGeo = new THREE.BoxGeometry(2.35, 1.45, 0.08);
-  const leftLens = new THREE.Mesh(leftLensGeo, mat.sapphireGlass);
-  leftLens.position.set(-1.55, -0.3, 0.16);
-  leftLens.rotation.y = 0.08;
-  group.add(leftLens);
-
-  const rightLensGeo = new THREE.BoxGeometry(2.35, 1.45, 0.08);
-  const rightLens = new THREE.Mesh(rightLensGeo, mat.sapphireGlass);
-  rightLens.position.set(1.55, -0.3, 0.16);
-  rightLens.rotation.y = -0.08;
-  group.add(rightLens);
-
-  // Projeção HUD no Guia de Onda Interno
-  const hudGeo = new THREE.PlaneGeometry(2.1, 1.05);
-  const hudMat = new THREE.MeshBasicMaterial({
-    map: hudController.texture,
-    transparent: true,
-    opacity: 0.95,
-    depthWrite: false
+  const browGeo = new THREE.ExtrudeGeometry(browShape, {
+    depth: 0.38, bevelEnabled: true, bevelSegments: 5,
+    steps: 3, bevelSize: 0.07, bevelThickness: 0.07
   });
-  const hudMesh = new THREE.Mesh(hudGeo, hudMat);
-  hudMesh.position.set(1.55, -0.3, 0.22);
-  hudMesh.rotation.y = -0.08;
-  group.add(hudMesh);
+  G.add(new THREE.Mesh(browGeo, M.titaniumDark));
 
-  // 5. Dobradiças Articuladas com Micro-parafusos e Hastes Acústicas
-  for (let side of [-1, 1]) {
-    // Dobradiça Articulada
-    const hingeGeo = new THREE.CylinderGeometry(0.12, 0.12, 0.28, 16);
-    const hinge = new THREE.Mesh(hingeGeo, mat.polishedTitanium);
-    hinge.position.set(side * 2.9, 0.3, -0.05);
-    group.add(hinge);
+  // Friso Cromado Inferior da Armação
+  const trimShape = new THREE.Shape();
+  trimShape.moveTo(-2.9, 0.12);
+  trimShape.bezierCurveTo(-1.4, 0.56, 1.4, 0.56, 2.9, 0.12);
+  trimShape.lineTo(2.85, 0.08);
+  trimShape.bezierCurveTo(1.3, 0.52, -1.3, 0.52, -2.85, 0.08);
+  trimShape.closePath();
+  const trimGeo = new THREE.ExtrudeGeometry(trimShape, {
+    depth: 0.4, bevelEnabled: true, bevelSegments: 2,
+    bevelSize: 0.02, bevelThickness: 0.02
+  });
+  G.add(new THREE.Mesh(trimGeo, M.chrome));
 
-    // Micro-parafuso no Topo da Dobradiça
-    const screw = createMicroScrew(mat.polishedChrome);
-    screw.position.set(side * 2.9, 0.45, -0.05);
-    group.add(screw);
+  // === Ponte Central com Sensor Array ===
+  const bridgeGeo = new THREE.CylinderGeometry(0.18, 0.22, 0.5, 20);
+  bridgeGeo.rotateZ(Math.PI / 2);
+  const bridge = new THREE.Mesh(bridgeGeo, M.titaniumPolished);
+  bridge.position.set(0, 0.45, 0.2);
+  G.add(bridge);
 
-    // Haste de Alumínio e Carbono
-    const templeGeo = new THREE.CylinderGeometry(0.09, 0.14, 3.4, 20);
-    templeGeo.rotateX(Math.PI / 2);
-    const temple = new THREE.Mesh(templeGeo, mat.anodizedAluminum);
-    temple.position.set(side * 2.85, 0.3, -1.75);
-    temple.rotation.y = -side * 0.06;
-    group.add(temple);
+  // LiDAR Dome
+  const lidarGeo = new THREE.SphereGeometry(0.1, 20, 20, 0, Math.PI * 2, 0, Math.PI * 0.5);
+  lidarGeo.rotateX(-Math.PI / 2);
+  const lidar = new THREE.Mesh(lidarGeo, M.oledBlack);
+  lidar.position.set(0, 0.5, 0.36);
+  G.add(lidar);
+  const lidarRing = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.015, 12, 24), M.chrome);
+  lidarRing.position.copy(lidar.position);
+  lidarRing.rotation.x = Math.PI / 2;
+  G.add(lidarRing);
 
-    // Transdutor de Áudio por Condução Óssea na Haste
-    const audioPodGeo = new THREE.BoxGeometry(0.16, 0.22, 0.6);
-    const audioPod = new THREE.Mesh(audioPodGeo, mat.brushedTitaniumDark);
-    audioPod.position.set(side * 2.82, 0.3, -1.2);
-    group.add(audioPod);
+  // === Câmeras Estereoscópicas Frontais ===
+  for (const s of [-1, 1]) {
+    // Aro Cromado
+    const camRing = new THREE.Mesh(
+      new THREE.TorusGeometry(0.08, 0.018, 12, 20),
+      M.chrome
+    );
+    camRing.position.set(s * 2.6, 0.4, 0.42);
+    camRing.rotation.x = Math.PI / 2;
+    G.add(camRing);
+    // Lente Escura
+    const camLens = new THREE.Mesh(
+      new THREE.SphereGeometry(0.065, 16, 16, 0, Math.PI * 2, 0, Math.PI * 0.45),
+      M.oledBlack
+    );
+    camLens.position.set(s * 2.6, 0.4, 0.44);
+    camLens.rotation.x = -Math.PI / 2;
+    G.add(camLens);
 
-    // Ponteira Emborrachada Anatômica
-    const tipGeo = new THREE.CylinderGeometry(0.08, 0.09, 1.0, 16);
-    tipGeo.rotateX(Math.PI / 2.3);
-    const tip = new THREE.Mesh(tipGeo, mat.matteRubber);
-    tip.position.set(side * 2.75, 0.18, -3.8);
-    group.add(tip);
+    // Microfone Pinhole
+    const mic = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.018, 0.018, 0.04, 10),
+      M.panelGap
+    );
+    mic.rotation.x = Math.PI / 2;
+    mic.position.set(s * 0.45, 0.6, 0.38);
+    G.add(mic);
   }
 
-  // Sombra de chão
-  addContactShadow(group, -1.4, 3.2, 0.4);
+  // === Nosepads em Silicone com Braços de Titânio ===
+  for (const s of [-1, 1]) {
+    // Braço articulado
+    const arm = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.015, 0.015, 0.4, 10),
+      M.titaniumPolished
+    );
+    arm.position.set(s * 0.38, 0.08, 0.08);
+    arm.rotation.z = s * 0.4;
+    G.add(arm);
+
+    // Pad de silicone
+    const padShape = new THREE.Shape();
+    padShape.moveTo(-0.08, -0.14);
+    padShape.quadraticCurveTo(-0.1, 0, -0.06, 0.14);
+    padShape.quadraticCurveTo(0, 0.16, 0.06, 0.14);
+    padShape.quadraticCurveTo(0.1, 0, 0.08, -0.14);
+    padShape.closePath();
+    const padGeo = new THREE.ExtrudeGeometry(padShape, {
+      depth: 0.06, bevelEnabled: true, bevelSize: 0.02,
+      bevelThickness: 0.02, bevelSegments: 3
+    });
+    const pad = new THREE.Mesh(padGeo, M.silicone);
+    pad.position.set(s * 0.5, -0.08, 0.05);
+    pad.rotation.y = s * 0.3;
+    G.add(pad);
+  }
+
+  // === Lentes Curvadas de Safira ===
+  for (const s of [-1, 1]) {
+    const lensGeo = new THREE.SphereGeometry(8, 40, 30, 
+      Math.PI * 0.48 + (s > 0 ? 0 : Math.PI * 0.04),
+      Math.PI * 0.04,
+      Math.PI * 0.44, Math.PI * 0.12
+    );
+    const lens = new THREE.Mesh(lensGeo, M.sapphire);
+    lens.position.set(s * 1.55, -0.3, -7.6);
+    G.add(lens);
+  }
+
+  // HUD Holográfico
+  const hudPlane = new THREE.Mesh(
+    new THREE.PlaneGeometry(2.1, 1.05),
+    new THREE.MeshBasicMaterial({
+      map: hud.texture, transparent: true, opacity: 0.92, depthWrite: false
+    })
+  );
+  hudPlane.position.set(1.55, -0.3, 0.24);
+  hudPlane.rotation.y = -0.08;
+  G.add(hudPlane);
+
+  // === Hastes com Dobradiças, Parafusos e Alto-falantes ===
+  for (const s of [-1, 1]) {
+    // Dobradiça
+    const hinge = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.13, 0.13, 0.3, 18),
+      M.titaniumPolished
+    );
+    hinge.position.set(s * 2.95, 0.32, -0.05);
+    G.add(hinge);
+
+    // Parafusos na dobradiça
+    for (const py of [0.42, 0.22]) {
+      const scr = makeScrew(M.chrome);
+      scr.position.set(s * 2.95, py, -0.05);
+      G.add(scr);
+    }
+
+    // Haste principal em Alumínio
+    const templeGeo = new THREE.CylinderGeometry(0.1, 0.14, 3.5, 20);
+    templeGeo.rotateX(Math.PI / 2);
+    const temple = new THREE.Mesh(templeGeo, M.aluminum);
+    temple.position.set(s * 2.88, 0.32, -1.8);
+    temple.rotation.y = -s * 0.06;
+    G.add(temple);
+
+    // Linha de antena na haste
+    const antennaLine = makePanelLine(0.008, 0.008, 1.5);
+    antennaLine.position.set(s * 2.88, 0.42, -1.5);
+    G.add(antennaLine);
+
+    // Alto-falante por condução óssea
+    const spkGeo = new THREE.BoxGeometry(0.2, 0.25, 0.65);
+    const spk = new THREE.Mesh(spkGeo, M.titaniumDark);
+    spk.position.set(s * 2.84, 0.32, -1.2);
+    G.add(spk);
+    // Grelha do alto-falante
+    const spkGrille = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.16, 0.45),
+      new THREE.MeshStandardMaterial({
+        map: createMicroGrilleTexture(), metalness: 0.8, roughness: 0.3
+      })
+    );
+    spkGrille.position.set(s * (2.84 + s * 0.11), 0.32, -1.2);
+    spkGrille.rotation.y = s * Math.PI / 2;
+    G.add(spkGrille);
+
+    // Ponteira Anatômica
+    const tipGeo = new THREE.CylinderGeometry(0.07, 0.1, 1.1, 16);
+    tipGeo.rotateX(Math.PI / 2.3);
+    G.add(new THREE.Mesh(tipGeo, M.rubber).translateX(s * 2.78).translateY(0.2).translateZ(-3.85));
+
+    // LED de Status na Haste
+    const led = new THREE.Mesh(new THREE.SphereGeometry(0.03, 10, 10), M.neonGreen);
+    led.position.set(s * 2.88, 0.44, -0.4);
+    G.add(led);
+  }
+
+  // Porta USB-C de Carga na Ponta da Haste Direita
+  const usbSlot = makePanelLine(0.22, 0.08, 0.06);
+  usbSlot.position.set(2.76, 0.2, -3.3);
+  G.add(usbSlot);
+
+  addContactShadow(G, -1.4, 3.5, 0.45);
 
   return {
-    group,
+    group: G,
     cameraPos: [0, 0.2, 5.4],
-    update: (time, isSpecial) => {
-      group.position.y = Math.sin(time * 1.8) * 0.06;
-      if (isSpecial) {
-        hudMesh.visible = true;
-        hudController.draw(time);
-        hudController.texture.needsUpdate = true;
-      } else {
-        hudMesh.visible = false;
-      }
+    update(t, fx) {
+      G.position.y = Math.sin(t * 1.8) * 0.05;
+      if (fx) { hudPlane.visible = true; hud.draw(t); hud.texture.needsUpdate = true; }
+      else { hudPlane.visible = false; }
     }
   };
 }
 
-// --------------------------------------------------------------------------
-// GADGET 2: PulseTouch Pro (Bracelete com Micro-parafusos, Pinos Ouro e Coroas)
-// --------------------------------------------------------------------------
+// ─────────────────────────────────────────────────────────────────
+// GADGET 2: PulseTouch Pro
+// ─────────────────────────────────────────────────────────────────
 function buildPulseTouchModel() {
-  const group = new THREE.Group();
-  const mat = createRealisticPBRMaterials();
-  const screenController = createSmartwatchScreenCanvas();
+  const G = new THREE.Group();
+  const M = createPBRMaterials();
+  const screen = createSmartwatchScreenCanvas();
 
-  // 1. Pulseira de Fluororrubina com Fendas de Ventilação Aerodinâmicas
-  const strapGeo = new THREE.TorusGeometry(1.95, 0.42, 24, 72, Math.PI * 1.85);
+  // === Pulseira com Ventilação e Textura ===
+  const strapGeo = new THREE.TorusGeometry(1.95, 0.44, 28, 80, Math.PI * 1.85);
   strapGeo.rotateX(Math.PI / 2);
   strapGeo.rotateZ(Math.PI * 0.07);
-  const strap = new THREE.Mesh(strapGeo, mat.matteRubber);
-  strap.castShadow = true;
-  group.add(strap);
+  G.add(new THREE.Mesh(strapGeo, M.rubber));
 
-  // Fivelas de Ventilação na Pulseira
-  for (let a = -1.2; a <= 1.2; a += 0.4) {
-    if (Math.abs(a) < 0.3) continue; // Pula sob a caixa
-    const ventGeo = new THREE.BoxGeometry(0.3, 0.08, 0.1);
-    const vent = new THREE.Mesh(ventGeo, mat.blackOLEDGlass);
-    vent.position.set(Math.sin(a) * 1.95, 0, Math.cos(a) * 1.95);
-    vent.rotation.y = a;
-    group.add(vent);
+  // Perfurações de ventilação
+  for (let a = -1.4; a <= 1.4; a += 0.25) {
+    if (Math.abs(a) < 0.45) continue;
+    const holeGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.5, 12);
+    holeGeo.rotateX(Math.PI / 2);
+    const hole = new THREE.Mesh(holeGeo, M.panelGap);
+    hole.position.set(Math.sin(a) * 1.95, 0, Math.cos(a) * 1.95);
+    hole.rotation.y = a;
+    G.add(hole);
   }
 
-  // Fecho Metálico Gravado
-  const buckleGeo = new THREE.BoxGeometry(0.9, 0.5, 0.3);
-  const buckle = new THREE.Mesh(buckleGeo, mat.polishedTitanium);
+  // Fecho Borboleta em Titânio Polido
+  const buckle = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.55, 0.3), M.titaniumPolished);
   buckle.position.set(0, -0.05, -1.95);
-  group.add(buckle);
+  G.add(buckle);
+  // Dobradiça do fecho
+  const bHinge = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.55, 12), M.chrome);
+  bHinge.rotation.x = Math.PI / 2;
+  bHinge.position.set(0, 0, -1.65);
+  G.add(bHinge);
 
-  // 2. Caixa Unibody em Titânio com 4 Parafusos Torx nos Cantos
-  const caseGeo = new THREE.BoxGeometry(1.85, 2.35, 0.65);
-  const caseMesh = new THREE.Mesh(caseGeo, mat.brushedTitaniumDark);
-  caseMesh.position.set(0, 0, 1.95);
-  caseMesh.castShadow = true;
-  group.add(caseMesh);
+  // === Caixa Unibody com Lugs e Parafusos ===
+  // Corpo principal
+  const caseGeo = new THREE.BoxGeometry(1.9, 2.4, 0.68);
+  const caseBody = new THREE.Mesh(caseGeo, M.titaniumDark);
+  caseBody.position.set(0, 0, 1.95);
+  G.add(caseBody);
 
-  // 4 Micro-parafusos Torx nos Cantos da Caixa
-  const cornerOffsets = [
-    [-0.8, 1.05], [0.8, 1.05],
-    [-0.8, -1.05], [0.8, -1.05]
-  ];
-  cornerOffsets.forEach(([cx, cy]) => {
-    const screw = createMicroScrew(mat.polishedChrome);
-    screw.position.set(cx, cy, 2.3);
-    group.add(screw);
-  });
+  // Lugs de conexão à pulseira
+  for (const sy of [-1, 1]) {
+    const lugGeo = new THREE.BoxGeometry(1.65, 0.35, 0.5);
+    const lug = new THREE.Mesh(lugGeo, M.titaniumDark);
+    lug.position.set(0, sy * 1.35, 1.95);
+    G.add(lug);
+    // Pinos de mola dos lugs
+    for (const sx of [-0.7, 0.7]) {
+      const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.12, 10), M.titaniumPolished);
+      pin.rotation.z = Math.PI / 2;
+      pin.position.set(sx, sy * 1.35, 1.95);
+      G.add(pin);
+    }
+  }
 
-  // Bisel de Titânio Polido Chanfrado
-  const bezelGeo = new THREE.BoxGeometry(1.75, 2.25, 0.08);
-  const bezelMesh = new THREE.Mesh(bezelGeo, mat.polishedTitanium);
-  bezelMesh.position.set(0, 0, 2.3);
-  group.add(bezelMesh);
+  // 4 Parafusos Torx nos Cantos
+  for (const [cx, cy] of [[-0.82, 1.08], [0.82, 1.08], [-0.82, -1.08], [0.82, -1.08]]) {
+    const s = makeScrew(M.chrome);
+    s.position.set(cx, cy, 2.3);
+    G.add(s);
+  }
 
-  // 3. Tela OLED Curva e Cristal de Safira
-  const screenGeo = new THREE.PlaneGeometry(1.58, 2.05);
-  const screenMat = new THREE.MeshBasicMaterial({ map: screenController.texture });
-  const screenMesh = new THREE.Mesh(screenGeo, screenMat);
-  screenMesh.position.set(0, 0, 2.35);
-  group.add(screenMesh);
+  // Bisel Polido com Chanfro 2D
+  const bezel = new THREE.Mesh(new THREE.BoxGeometry(1.8, 2.3, 0.06), M.titaniumPolished);
+  bezel.position.set(0, 0, 2.3);
+  G.add(bezel);
 
-  const glassGeo = new THREE.BoxGeometry(1.65, 2.15, 0.06);
-  const glassMesh = new THREE.Mesh(glassGeo, mat.sapphireGlass);
-  glassMesh.position.set(0, 0, 2.39);
-  group.add(glassMesh);
+  // Juntas de Painel
+  for (const cy of [-1.15, 1.15]) {
+    G.add(makePanelLine(1.85, 0.008, 0.7).translateY(cy).translateZ(1.95));
+  }
 
-  // 4. Lado Direito: Coroa Digital Recartilhada com Eixo Duplo
-  const crownGeo = new THREE.CylinderGeometry(0.24, 0.24, 0.35, 24);
+  // === Tela OLED e Safira ===
+  const screenMesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.6, 2.1),
+    new THREE.MeshBasicMaterial({ map: screen.texture })
+  );
+  screenMesh.position.set(0, 0, 2.34);
+  G.add(screenMesh);
+
+  const glass = new THREE.Mesh(new THREE.BoxGeometry(1.7, 2.2, 0.05), M.glassClear);
+  glass.position.set(0, 0, 2.38);
+  G.add(glass);
+
+  // === Coroa Digital Recartilhada ===
+  const crownGeo = new THREE.CylinderGeometry(0.22, 0.22, 0.4, 24);
   crownGeo.rotateZ(Math.PI / 2);
-  const crown = new THREE.Mesh(crownGeo, mat.polishedTitanium);
-  crown.position.set(1.05, 0.45, 1.95);
-  group.add(crown);
+  const crown = new THREE.Mesh(crownGeo, M.titaniumPolished);
+  crown.position.set(1.08, 0.5, 1.95);
+  G.add(crown);
+  // Ranhuras de knurling
+  for (let i = 0; i < 16; i++) {
+    const a = (i / 16) * Math.PI * 2;
+    const knurl = new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.01, 0.38), M.panelGap);
+    knurl.position.set(1.08 + 0.2, 0.5 + Math.cos(a) * 0.22, 1.95 + Math.sin(a) * 0.22);
+    G.add(knurl);
+  }
+  // Anel neon da coroa
+  const crownRing = new THREE.Mesh(
+    new THREE.TorusGeometry(0.22, 0.035, 14, 24),
+    M.neonOrange
+  );
+  crownRing.rotation.y = Math.PI / 2;
+  crownRing.position.set(1.3, 0.5, 1.95);
+  G.add(crownRing);
 
-  const crownRingGeo = new THREE.TorusGeometry(0.24, 0.04, 16, 24);
-  crownRingGeo.rotateY(Math.PI / 2);
-  const crownRing = new THREE.Mesh(crownRingGeo, mat.neonOrange);
-  crownRing.position.set(1.15, 0.45, 1.95);
-  group.add(crownRing);
+  // Botão Secundário
+  const secBtn = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.55, 0.22), M.titaniumPolished);
+  secBtn.position.set(1.0, -0.42, 1.95);
+  G.add(secBtn);
 
-  // Botão Secundário Lateral Direito
-  const secBtnGeo = new THREE.BoxGeometry(0.18, 0.5, 0.22);
-  const secBtn = new THREE.Mesh(secBtnGeo, mat.polishedTitanium);
-  secBtn.position.set(0.98, -0.45, 1.95);
-  group.add(secBtn);
+  // Botão de Ação Laranja
+  const actBtn = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.7, 0.26), M.neonOrange);
+  actBtn.position.set(-1.0, 0.22, 1.95);
+  G.add(actBtn);
 
-  // Lado Esquerdo: Botão de Ação Laranja Anodizado com Estrias
-  const actionBtnGeo = new THREE.BoxGeometry(0.18, 0.65, 0.26);
-  const actionBtn = new THREE.Mesh(actionBtnGeo, mat.neonOrange);
-  actionBtn.position.set(-0.98, 0.2, 1.95);
-  group.add(actionBtn);
+  // === Traseira: Pinos Ouro, Sensores PPG, Porta USB-C ===
+  // Dome de cerâmica
+  const sensorDome = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.6, 0.7, 0.1, 28),
+    M.ceramic
+  );
+  sensorDome.rotation.x = Math.PI / 2;
+  sensorDome.position.set(0, 0, 1.58);
+  G.add(sensorDome);
 
-  // 5. Traseira Cerâmica: 4 Pinos Pogo Banhados a Ouro 24k e Matriz Óptica
-  const sensorDomeGeo = new THREE.CylinderGeometry(0.55, 0.65, 0.12, 24);
-  sensorDomeGeo.rotateX(Math.PI / 2);
-  const sensorDome = new THREE.Mesh(sensorDomeGeo, mat.blackOLEDGlass);
-  sensorDome.position.set(0, 0, 1.6);
-  group.add(sensorDome);
-
-  // 4 Pinos Pogo de Carga em Ouro 24k
-  for (let p = -0.24; p <= 0.24; p += 0.16) {
-    const pinGeo = new THREE.CylinderGeometry(0.035, 0.035, 0.08, 12);
-    pinGeo.rotateX(Math.PI / 2);
-    const pin = new THREE.Mesh(pinGeo, mat.gold24k);
-    pin.position.set(p, 0.4, 1.58);
-    group.add(pin);
+  // 4 Pinos Pogo de Ouro 24k
+  for (const p of [-0.24, -0.08, 0.08, 0.24]) {
+    const pin = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.032, 0.032, 0.08, 12),
+      M.gold
+    );
+    pin.rotation.x = Math.PI / 2;
+    pin.position.set(p, 0.42, 1.55);
+    G.add(pin);
   }
 
-  // Matriz de 4 Fotodiodos Biométricos Verdes e Vermelhos
+  // 4 LEDs PPG biométricos
   for (let i = 0; i < 4; i++) {
-    const ang = (i * Math.PI) / 2;
-    const diodeGeo = new THREE.SphereGeometry(0.07, 16, 16);
-    const diodeMat = (i % 2 === 0) ? mat.neonGreen : mat.neonOrange;
-    const diode = new THREE.Mesh(diodeGeo, diodeMat);
-    diode.position.set(Math.cos(ang) * 0.25, Math.sin(ang) * 0.25, 1.54);
-    group.add(diode);
+    const a = (i / 4) * Math.PI * 2;
+    const led = new THREE.Mesh(
+      new THREE.SphereGeometry(0.06, 12, 12),
+      i % 2 === 0 ? M.neonGreen : M.neonRed
+    );
+    led.position.set(Math.cos(a) * 0.28, Math.sin(a) * 0.28, 1.52);
+    G.add(led);
   }
 
-  // Sombra de chão
-  addContactShadow(group, -1.8, 2.6, 0.45);
+  // Porta USB-C
+  const usbC = makePanelLine(0.22, 0.08, 0.06);
+  usbC.position.set(0, -1.25, 1.95);
+  G.add(usbC);
+
+  // Speaker grille na base
+  const spkGrille = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.5, 0.08),
+    new THREE.MeshStandardMaterial({ map: createMicroGrilleTexture(), metalness: 0.7, roughness: 0.3 })
+  );
+  spkGrille.position.set(0, -1.18, 2.3);
+  G.add(spkGrille);
+
+  addContactShadow(G, -1.8, 2.8, 0.5);
 
   return {
-    group,
+    group: G,
     cameraPos: [0, 1.2, 5.6],
-    update: (time, isSpecial) => {
-      group.position.y = Math.sin(time * 2.0) * 0.05;
-
-      if (isSpecial) {
-        caseMesh.position.x = Math.sin(time * 40) * 0.015;
-        screenController.draw(time);
-        screenController.texture.needsUpdate = true;
+    update(t, fx) {
+      G.position.y = Math.sin(t * 2) * 0.04;
+      if (fx) {
+        caseBody.position.x = Math.sin(t * 40) * 0.012;
+        screen.draw(t);
+        screen.texture.needsUpdate = true;
       }
     }
   };
 }
 
-// --------------------------------------------------------------------------
-// GADGET 3: AuraRing Control (Anel de Titânio com Eletrodos Ouro e Micro-entalhes)
-// --------------------------------------------------------------------------
+// ─────────────────────────────────────────────────────────────────
+// GADGET 3: AuraRing Control
+// ─────────────────────────────────────────────────────────────────
 function buildAuraRingModel() {
-  const group = new THREE.Group();
-  const mat = createRealisticPBRMaterials();
+  const G = new THREE.Group();
+  const M = createPBRMaterials();
 
-  // 1. Corpo do Anel em Torus com Ranhuras Duplas de Usinagem
-  const ringGeo = new THREE.TorusGeometry(1.65, 0.38, 36, 100);
-  const ringMesh = new THREE.Mesh(ringGeo, mat.polishedTitanium);
-  ringMesh.castShadow = true;
-  group.add(ringMesh);
+  // === Corpo do Anel com Perfil Toroidal Perfeito ===
+  const ringGeo = new THREE.TorusGeometry(1.65, 0.4, 40, 120);
+  G.add(new THREE.Mesh(ringGeo, M.titaniumPolished));
 
-  // Ranhura Esquerda e Direita de Contraste Espelhado
-  for (let s of [-1, 1]) {
-    const grooveGeo = new THREE.TorusGeometry(1.66, 0.02, 16, 100);
-    const groove = new THREE.Mesh(grooveGeo, mat.polishedChrome);
-    groove.position.z = s * 0.22;
-    group.add(groove);
+  // Ranhuras Duplas de Precisão Cromadas
+  for (const dz of [-0.24, 0.24]) {
+    const groove = new THREE.Mesh(
+      new THREE.TorusGeometry(1.67, 0.018, 14, 120),
+      M.chrome
+    );
+    groove.position.z = dz;
+    G.add(groove);
   }
 
-  // 2. Faceta Plana Ergonômica Superior com Micro-entalhe Sensorial
-  const sensorPadGeo = new THREE.BoxGeometry(0.9, 0.18, 0.45);
-  const sensorPad = new THREE.Mesh(sensorPadGeo, mat.brushedTitaniumDark);
-  sensorPad.position.set(0, 1.95, 0);
-  group.add(sensorPad);
+  // Sulco Equatorial Escuro
+  const midGroove = new THREE.Mesh(
+    new THREE.TorusGeometry(1.68, 0.012, 12, 120),
+    M.panelGap
+  );
+  G.add(midGroove);
 
-  // Micro-LED de Notificação Central (0.3mm)
-  const ledDotGeo = new THREE.SphereGeometry(0.045, 12, 12);
-  const ledDot = new THREE.Mesh(ledDotGeo, mat.neonCyan);
-  ledDot.position.set(0, 2.05, 0);
-  group.add(ledDot);
+  // === Faceta Plana Horizon com Sensor Touch e Micro-LED ===
+  const padGeo = new THREE.BoxGeometry(0.95, 0.16, 0.5);
+  const pad = new THREE.Mesh(padGeo, M.titaniumDark);
+  pad.position.set(0, 1.97, 0);
+  G.add(pad);
 
-  // 3. Faixa Perimetral Luminescente de Gestos 3D
-  const inlayGeo = new THREE.TorusGeometry(1.69, 0.05, 20, 100);
-  const inlayMesh = new THREE.Mesh(inlayGeo, mat.neonPurple);
-  group.add(inlayMesh);
+  // Sensor touch capacitivo embutido
+  const touchSensor = new THREE.Mesh(
+    new THREE.BoxGeometry(0.6, 0.04, 0.3),
+    M.oledBlack
+  );
+  touchSensor.position.set(0, 2.06, 0);
+  G.add(touchSensor);
 
-  // 4. Manga Interna em Resina Biocompatível com Eletrodos em Ouro 24k
-  const innerResinGeo = new THREE.TorusGeometry(1.5, 0.16, 24, 80);
-  const innerResin = new THREE.Mesh(innerResinGeo, mat.sapphireGlass);
-  group.add(innerResin);
+  // Micro-LED de notificação 0.3mm
+  const led = new THREE.Mesh(new THREE.SphereGeometry(0.04, 10, 10), M.neonCyan);
+  led.position.set(0, 2.08, 0);
+  G.add(led);
 
-  // 2 Eletrodos de Carga em Ouro 24k Flush-Mount
-  for (let s of [-0.22, 0.22]) {
-    const goldPlateGeo = new THREE.BoxGeometry(0.2, 0.08, 0.12);
-    const goldPlate = new THREE.Mesh(goldPlateGeo, mat.gold24k);
-    goldPlate.position.set(s, -1.35, 0.25);
-    group.add(goldPlate);
+  // === Faixa Perimetral Luminescente ===
+  const inlay = new THREE.Mesh(
+    new THREE.TorusGeometry(1.72, 0.045, 18, 120),
+    M.neonPurple
+  );
+  G.add(inlay);
+
+  // === Interior: Resina Biocompatível com Eletrodos e Sensores ===
+  const innerResin = new THREE.Mesh(
+    new THREE.TorusGeometry(1.48, 0.18, 28, 90),
+    M.silicone
+  );
+  G.add(innerResin);
+
+  // 2 Eletrodos de Carga em Ouro 24k
+  for (const dz of [-0.2, 0.2]) {
+    const elec = new THREE.Mesh(
+      new THREE.BoxGeometry(0.22, 0.06, 0.12),
+      M.gold
+    );
+    elec.position.set(0, -1.38, dz);
+    G.add(elec);
   }
 
-  // 3 Nódulos Sensores Ópticos com Domos de Lente Micro-usinados
-  const sensorPositions = [-0.6, 0, 0.6];
-  const sensorColors = [mat.neonGreen, mat.neonPurple, mat.neonCyan];
-
-  sensorPositions.forEach((pos, idx) => {
-    const diodeGeo = new THREE.SphereGeometry(0.09, 16, 16);
-    const diode = new THREE.Mesh(diodeGeo, sensorColors[idx]);
-    diode.position.set(pos, -1.35, 0);
-    group.add(diode);
-  });
-
-  // 5. Ondas e Micro-partículas Espaciais de Interação
-  const spatialWaves = [];
+  // 3 Nódulos Sensores Ópticos com Dome Lens
+  const sColors = [M.neonGreen, M.neonPurple, M.neonCyan];
   for (let i = 0; i < 3; i++) {
-    const waveGeo = new THREE.TorusGeometry(2.15 + (i * 0.45), 0.02, 16, 80);
-    const waveMat = new THREE.MeshBasicMaterial({
-      color: (i % 2 === 0 ? 0x00f2fe : 0xc084fc),
-      transparent: true,
-      opacity: 0.35 - (i * 0.08)
-    });
-    const wave = new THREE.Mesh(waveGeo, waveMat);
-    wave.rotation.x = Math.PI / 3;
-    group.add(wave);
-    spatialWaves.push(wave);
+    const diode = new THREE.Mesh(new THREE.SphereGeometry(0.08, 14, 14), sColors[i]);
+    diode.position.set((i - 1) * 0.55, -1.38, 0);
+    G.add(diode);
+
+    // Dome lens sobre o diodo
+    const dome = new THREE.Mesh(
+      new THREE.SphereGeometry(0.1, 14, 14, 0, Math.PI * 2, 0, Math.PI * 0.4),
+      M.glassClear
+    );
+    dome.position.set((i - 1) * 0.55, -1.38, 0);
+    dome.rotation.x = Math.PI;
+    G.add(dome);
   }
 
-  // Sombra de chão
-  addContactShadow(group, -1.7, 2.5, 0.35);
+  // === Ondas Espaciais de Controle Gestual ===
+  const waves = [];
+  for (let i = 0; i < 3; i++) {
+    const wGeo = new THREE.TorusGeometry(2.2 + i * 0.5, 0.018, 14, 90);
+    const wMat = new THREE.MeshBasicMaterial({
+      color: i % 2 === 0 ? 0x00f2fe : 0xc084fc,
+      transparent: true, opacity: 0.35 - i * 0.08
+    });
+    const w = new THREE.Mesh(wGeo, wMat);
+    w.rotation.x = Math.PI / 3;
+    G.add(w);
+    waves.push(w);
+  }
+
+  addContactShadow(G, -1.7, 2.6, 0.35);
 
   return {
-    group,
+    group: G,
     cameraPos: [0, 0.3, 5.2],
-    update: (time, isSpecial) => {
-      group.rotation.x = time * 0.5;
-      group.rotation.y = time * 0.7;
+    update(t, fx) {
+      G.rotation.x = t * 0.5;
+      G.rotation.y = t * 0.7;
 
-      if (isSpecial) {
-        spatialWaves.forEach((w, idx) => {
+      // Micro-LED pulsante
+      led.scale.setScalar(0.8 + Math.sin(t * 4) * 0.4);
+
+      if (fx) {
+        waves.forEach((w, i) => {
           w.visible = true;
-          w.rotation.z += 0.015 * (idx + 1);
-          const s = 1 + Math.sin(time * 3 + idx) * 0.12;
+          w.rotation.z += 0.014 * (i + 1);
+          const s = 1 + Math.sin(t * 3 + i) * 0.12;
           w.scale.set(s, s, s);
         });
       } else {
-        spatialWaves.forEach(w => w.visible = false);
+        waves.forEach(w => w.visible = false);
       }
     }
   };
 }
 
-// --------------------------------------------------------------------------
-// GADGET 4: HoloDesk AI (Hub Acústico com Controles Touch e Núcleo Truncado)
-// --------------------------------------------------------------------------
+// ─────────────────────────────────────────────────────────────────
+// GADGET 4: HoloDesk AI
+// ─────────────────────────────────────────────────────────────────
 function buildHoloDeskModel() {
-  const group = new THREE.Group();
-  const mat = createRealisticPBRMaterials();
-  const grilleTexture = createMicroGrilleTexture();
+  const G = new THREE.Group();
+  const M = createPBRMaterials();
+  const grilleTex = createMicroGrilleTexture();
 
-  // 1. Base Cilíndrica Maciça de Alumínio Acústico Anodizado
-  const baseGeo = new THREE.CylinderGeometry(1.9, 2.25, 1.4, 48);
-  const baseMesh = new THREE.Mesh(baseGeo, mat.anodizedAluminum);
-  baseMesh.position.y = -1.1;
-  baseMesh.castShadow = true;
-  group.add(baseMesh);
+  // === Base Cilíndrica Maciça ===
+  const baseGeo = new THREE.CylinderGeometry(1.95, 2.3, 1.45, 52);
+  const base = new THREE.Mesh(baseGeo, M.aluminum);
+  base.position.y = -1.1;
+  G.add(base);
 
-  // Anel de Borracha Antiderrapante no Fundo
-  const footRingGeo = new THREE.TorusGeometry(2.1, 0.08, 16, 48);
-  footRingGeo.rotateX(Math.PI / 2);
-  const footRing = new THREE.Mesh(footRingGeo, mat.matteRubber);
-  footRing.position.y = -1.8;
-  group.add(footRing);
+  // Pé de Borracha Antiderrapante
+  const footGeo = new THREE.TorusGeometry(2.15, 0.06, 14, 52);
+  footGeo.rotateX(Math.PI / 2);
+  G.add(new THREE.Mesh(footGeo, M.rubber).translateY(-1.83));
 
-  // Microperfurações Acústicas Usinadas a Laser
+  // Grelha Acústica Ultra-HD
+  const grilleGeo = new THREE.CylinderGeometry(1.97, 2.32, 0.7, 52, 1, true);
   const grilleMat = new THREE.MeshStandardMaterial({
-    map: grilleTexture,
-    metalness: 0.8,
-    roughness: 0.3
+    map: grilleTex, metalness: 0.82, roughness: 0.28
   });
-  const acousticRingGeo = new THREE.CylinderGeometry(1.92, 2.27, 0.65, 48);
-  const acousticRing = new THREE.Mesh(acousticRingGeo, grilleMat);
-  acousticRing.position.y = -1.1;
-  group.add(acousticRing);
+  G.add(new THREE.Mesh(grilleGeo, grilleMat).translateY(-1.1));
 
-  // Placa Superior com Chanfro de Prata Espelhada
-  const topPlateGeo = new THREE.CylinderGeometry(1.88, 1.9, 0.12, 48);
-  const topPlate = new THREE.Mesh(topPlateGeo, mat.polishedChrome);
-  topPlate.position.y = -0.38;
-  group.add(topPlate);
+  // Bisel Superior Cromado Espelhado
+  const topPlate = new THREE.Mesh(
+    new THREE.CylinderGeometry(1.93, 1.95, 0.1, 52),
+    M.chrome
+  );
+  topPlate.position.y = -0.36;
+  G.add(topPlate);
 
-  // Anel Touch Capacitivo no Topo com 4 Ícones Gravados
-  const touchRingGeo = new THREE.RingGeometry(1.35, 1.85, 40);
-  touchRingGeo.rotateX(-Math.PI / 2);
-  const touchRing = new THREE.Mesh(touchRingGeo, mat.blackOLEDGlass);
-  touchRing.position.y = -0.31;
-  group.add(touchRing);
+  // === Anel Touch Capacitivo com LEDs de Controle ===
+  const touchRing = new THREE.Mesh(
+    new THREE.RingGeometry(1.35, 1.88, 48),
+    M.oledBlack
+  );
+  touchRing.rotation.x = -Math.PI / 2;
+  touchRing.position.y = -0.3;
+  G.add(touchRing);
 
-  // 4 Micro-pontos de LED dos Controles Touch (+, -, Mute, Power)
-  for (let i = 0; i < 4; i++) {
-    const ang = (i * Math.PI) / 2;
-    const dotGeo = new THREE.CircleGeometry(0.045, 12);
-    dotGeo.rotateX(-Math.PI / 2);
-    const dot = new THREE.Mesh(dotGeo, mat.neonCyan);
-    dot.position.set(Math.cos(ang) * 1.6, -0.3, Math.sin(ang) * 1.6);
-    group.add(dot);
-  }
+  // 4 LEDs de Controle (+, -, Mute, Power)
+  const ctrlAngles = [0, Math.PI / 2, Math.PI, Math.PI * 1.5];
+  ctrlAngles.forEach((a, i) => {
+    const dot = new THREE.Mesh(
+      new THREE.CircleGeometry(0.04, 12),
+      i === 3 ? M.neonRed : M.neonCyan
+    );
+    dot.rotation.x = -Math.PI / 2;
+    dot.position.set(Math.cos(a) * 1.62, -0.29, Math.sin(a) * 1.62);
+    G.add(dot);
+  });
 
-  // Lente Óptica de Projeção Convexa e Cone Refletor
-  const projectorLensGeo = new THREE.SphereGeometry(1.3, 32, 16, 0, Math.PI * 2, 0, Math.PI * 0.28);
-  projectorLensGeo.rotateX(Math.PI);
-  const projectorLens = new THREE.Mesh(projectorLensGeo, mat.sapphireGlass);
-  projectorLens.position.y = -0.28;
-  group.add(projectorLens);
+  // Lente Óptica Convexa de Projeção
+  const projLens = new THREE.Mesh(
+    new THREE.SphereGeometry(1.3, 36, 18, 0, Math.PI * 2, 0, Math.PI * 0.25),
+    M.sapphire
+  );
+  projLens.rotation.x = Math.PI;
+  projLens.position.y = -0.28;
+  G.add(projLens);
 
-  // Anel Emissor Laser Perimetral
-  const emitterRingGeo = new THREE.TorusGeometry(1.32, 0.05, 16, 48);
-  emitterRingGeo.rotateX(Math.PI / 2);
-  const emitterRing = new THREE.Mesh(emitterRingGeo, mat.neonCyan);
-  emitterRing.position.y = -0.32;
-  group.add(emitterRing);
+  // Anel Emissor
+  const emRing = new THREE.Mesh(
+    new THREE.TorusGeometry(1.35, 0.05, 14, 52),
+    M.neonCyan
+  );
+  emRing.rotation.x = Math.PI / 2;
+  emRing.position.y = -0.32;
+  G.add(emRing);
 
-  // 2. Cone de Luz Volumétrica Coerente
-  const coneGeo = new THREE.ConeGeometry(2.5, 3.2, 48, 1, true);
+  // Porta USB-C na Base
+  const usbPort = makePanelLine(0.24, 0.1, 0.06);
+  usbPort.position.set(0, -1.4, 2.28);
+  G.add(usbPort);
+
+  // === Cone de Luz Volumétrica ===
+  const coneGeo = new THREE.ConeGeometry(2.6, 3.4, 52, 1, true);
   coneGeo.rotateX(Math.PI);
   const coneMat = new THREE.MeshBasicMaterial({
-    color: 0x00f2fe,
-    transparent: true,
-    opacity: 0.22,
-    side: THREE.DoubleSide,
-    depthWrite: false
+    color: 0x00f2fe, transparent: true, opacity: 0.18,
+    side: THREE.DoubleSide, depthWrite: false
   });
-  const coneMesh = new THREE.Mesh(coneGeo, coneMat);
-  coneMesh.position.y = 1.1;
-  group.add(coneMesh);
+  const cone = new THREE.Mesh(coneGeo, coneMat);
+  cone.position.y = 1.2;
+  G.add(cone);
 
-  // 3. Projeção Holográfica 3D: Núcleo Neural de IA
-  const holoGroup = new THREE.Group();
-  holoGroup.position.y = 1.6;
+  // === Projeção Holográfica 3D ===
+  const holo = new THREE.Group();
+  holo.position.y = 1.65;
 
   // Esfera de Energia Central
-  const energyCoreGeo = new THREE.SphereGeometry(0.38, 24, 24);
-  const energyCore = new THREE.Mesh(energyCoreGeo, mat.neonCyan);
-  holoGroup.add(energyCore);
+  const core = new THREE.Mesh(new THREE.SphereGeometry(0.4, 28, 28), M.neonCyan);
+  holo.add(core);
 
-  // Poliedro Neural Wireframe
-  const icoGeo = new THREE.IcosahedronGeometry(0.95, 0);
+  // Icosaedro Wireframe
   const icoMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, wireframe: true });
-  const icoMesh = new THREE.Mesh(icoGeo, icoMat);
-  holoGroup.add(icoMesh);
+  const ico = new THREE.Mesh(new THREE.IcosahedronGeometry(1.0, 0), icoMat);
+  holo.add(ico);
 
-  // Octaedro Invertido
-  const octGeo = new THREE.OctahedronGeometry(0.65, 0);
+  // Octaedro Interno
   const octMat = new THREE.MeshBasicMaterial({ color: 0xc084fc, wireframe: true });
-  const octMesh = new THREE.Mesh(octGeo, octMat);
-  holoGroup.add(octMesh);
+  const oct = new THREE.Mesh(new THREE.OctahedronGeometry(0.68, 0), octMat);
+  holo.add(oct);
+
+  // Dodecaedro Exterior Sutil
+  const dodMat = new THREE.MeshBasicMaterial({
+    color: 0x00f2fe, wireframe: true, transparent: true, opacity: 0.3
+  });
+  const dod = new THREE.Mesh(new THREE.DodecahedronGeometry(1.35, 0), dodMat);
+  holo.add(dod);
 
   // Anéis Orbitais com Nódulos de Dados
-  const ring1Geo = new THREE.TorusGeometry(1.35, 0.03, 16, 48);
-  const ring1 = new THREE.Mesh(ring1Geo, mat.neonCyan);
-  holoGroup.add(ring1);
+  const ring1 = new THREE.Mesh(new THREE.TorusGeometry(1.4, 0.025, 14, 52), M.neonCyan);
+  holo.add(ring1);
+  const ring2 = new THREE.Mesh(new THREE.TorusGeometry(1.6, 0.02, 14, 52), M.neonPurple);
+  ring2.rotation.x = Math.PI / 2.8;
+  holo.add(ring2);
 
-  const ring2Geo = new THREE.TorusGeometry(1.55, 0.025, 16, 48);
-  ring2Geo.rotateX(Math.PI / 2.8);
-  const ring2 = new THREE.Mesh(ring2Geo, mat.neonPurple);
-  holoGroup.add(ring2);
-
-  // Micro-partículas em Órbita
-  const particleCount = 18;
+  // Micro-partículas Orbitais
   const particles = [];
-  for (let p = 0; p < particleCount; p++) {
-    const pGeo = new THREE.SphereGeometry(0.035, 8, 8);
-    const pMesh = new THREE.Mesh(pGeo, mat.neonCyan);
-    const rad = 1.1 + Math.random() * 0.6;
+  for (let i = 0; i < 24; i++) {
+    const pGeo = new THREE.SphereGeometry(0.03, 8, 8);
+    const pMat = i % 3 === 0 ? M.neonCyan : (i % 3 === 1 ? M.neonPurple : M.neonGreen);
+    const p = new THREE.Mesh(pGeo, pMat);
+    const rad = 1.0 + Math.random() * 0.7;
     const ang = Math.random() * Math.PI * 2;
-    pMesh.position.set(Math.cos(ang) * rad, (Math.random() - 0.5) * 0.8, Math.sin(ang) * rad);
-    holoGroup.add(pMesh);
-    particles.push(pMesh);
+    p.position.set(Math.cos(ang) * rad, (Math.random() - 0.5) * 0.9, Math.sin(ang) * rad);
+    holo.add(p);
+    particles.push({ mesh: p, rad, speed: 0.5 + Math.random() * 1.5, offset: ang });
   }
 
-  group.add(holoGroup);
+  G.add(holo);
 
-  // Sombra de chão
-  addContactShadow(group, -1.82, 3.0, 0.6);
+  addContactShadow(G, -1.85, 3.2, 0.6);
 
   return {
-    group,
+    group: G,
     cameraPos: [0, 0.8, 6.4],
-    update: (time, isSpecial) => {
-      if (isSpecial) {
-        holoGroup.visible = true;
-        coneMesh.visible = true;
-
-        icoMesh.rotation.x = time * 0.9;
-        icoMesh.rotation.y = time * 1.3;
-        octMesh.rotation.x = -time * 1.1;
-        octMesh.rotation.z = time * 0.8;
-
-        ring1.rotation.z = time * 1.0;
-        ring2.rotation.y = -time * 1.2;
-
-        const pulse = 1 + Math.sin(time * 5) * 0.16;
-        energyCore.scale.set(pulse, pulse, pulse);
-        holoGroup.position.y = 1.6 + Math.sin(time * 2.5) * 0.12;
-
-        particles.forEach((p, i) => {
-          p.position.y += Math.sin(time * 3 + i) * 0.005;
+    update(t, fx) {
+      if (fx) {
+        holo.visible = true;
+        cone.visible = true;
+        ico.rotation.x = t * 0.9; ico.rotation.y = t * 1.3;
+        oct.rotation.x = -t * 1.1; oct.rotation.z = t * 0.8;
+        dod.rotation.y = t * 0.4; dod.rotation.x = t * 0.3;
+        ring1.rotation.z = t; ring2.rotation.y = -t * 1.2;
+        core.scale.setScalar(1 + Math.sin(t * 5) * 0.16);
+        holo.position.y = 1.65 + Math.sin(t * 2.5) * 0.1;
+        particles.forEach(p => {
+          const a = p.offset + t * p.speed;
+          p.mesh.position.x = Math.cos(a) * p.rad;
+          p.mesh.position.z = Math.sin(a) * p.rad;
         });
       } else {
-        holoGroup.visible = false;
-        coneMesh.visible = false;
+        holo.visible = false;
+        cone.visible = false;
       }
     }
   };
 }
 
-// --------------------------------------------------------------------------
-// GADGET 5: HydroSmart (Garrafa Torneada com Medidor Segmentado e Refletor UV)
-// --------------------------------------------------------------------------
+// ─────────────────────────────────────────────────────────────────
+// GADGET 5: HydroSmart
+// ─────────────────────────────────────────────────────────────────
 function buildHydroSmartModel() {
-  const group = new THREE.Group();
-  const mat = createRealisticPBRMaterials();
-  const capOledTexture = createBottleOLEDTexture();
+  const G = new THREE.Group();
+  const M = createPBRMaterials();
+  const oledTex = createBottleOLEDTexture();
 
-  // 1. Corpo em Torno (Lathe Geometry de Alta Resolução)
-  const points = [];
-  points.push(new THREE.Vector2(0, -1.8));
-  points.push(new THREE.Vector2(0.96, -1.8));
-  points.push(new THREE.Vector2(0.98, -1.6));
-  points.push(new THREE.Vector2(0.96, 0.6));
-  points.push(new THREE.Vector2(0.92, 1.2));
-  points.push(new THREE.Vector2(0.72, 1.6));
-  points.push(new THREE.Vector2(0.72, 1.95));
-  points.push(new THREE.Vector2(0.66, 1.95));
+  // === Corpo em Torno de Alta Resolução ===
+  const pts = [
+    [0, -1.85], [0.97, -1.85], [0.99, -1.65], [0.97, -1.5],
+    [0.96, 0.65], [0.93, 1.0], [0.85, 1.3], [0.73, 1.6],
+    [0.73, 1.98], [0.67, 1.98]
+  ].map(([x, y]) => new THREE.Vector2(x, y));
+  G.add(new THREE.Mesh(new THREE.LatheGeometry(pts, 52), M.aluminum));
 
-  const bodyGeo = new THREE.LatheGeometry(points, 48);
-  const bodyMesh = new THREE.Mesh(bodyGeo, mat.anodizedAluminum);
-  bodyMesh.castShadow = true;
-  group.add(bodyMesh);
+  // Copo Base de Proteção em Cromo Polido
+  const baseBand = new THREE.Mesh(new THREE.CylinderGeometry(0.98, 0.98, 0.3, 52), M.chrome);
+  baseBand.position.y = -1.68;
+  G.add(baseBand);
 
-  // Copo de Proteção Base em Aço Inox com Gravação
-  const baseBandGeo = new THREE.CylinderGeometry(0.97, 0.97, 0.28, 48);
-  const baseBand = new THREE.Mesh(baseBandGeo, mat.polishedChrome);
-  baseBand.position.y = -1.65;
-  group.add(baseBand);
+  // Anel de Identificação Gravado no Corpo
+  const logoRing = new THREE.Mesh(
+    new THREE.TorusGeometry(0.97, 0.015, 10, 52),
+    M.titaniumPolished
+  );
+  logoRing.rotation.x = Math.PI / 2;
+  logoRing.position.y = 0;
+  G.add(logoRing);
 
-  // 2. Tampa Inteligente com Anel de Silicone Estriado
-  const capGeo = new THREE.CylinderGeometry(0.76, 0.76, 0.65, 48);
-  const capMesh = new THREE.Mesh(capGeo, mat.brushedTitaniumDark);
-  capMesh.position.y = 2.25;
-  capMesh.castShadow = true;
-  group.add(capMesh);
+  // Logo "GT" Engraved
+  const logoPlane = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.5, 0.25),
+    new THREE.MeshBasicMaterial({
+      map: createLogoEngravingTexture(),
+      transparent: true, depthWrite: false
+    })
+  );
+  logoPlane.position.set(0, 0, 0.99);
+  G.add(logoPlane);
 
-  // Anel Diamond-Knurled de Aderência
-  const gripBandGeo = new THREE.CylinderGeometry(0.78, 0.78, 0.32, 48);
-  const gripBand = new THREE.Mesh(gripBandGeo, mat.matteRubber);
-  gripBand.position.y = 2.25;
-  group.add(gripBand);
+  // === Tampa Inteligente com Display ===
+  const capGeo = new THREE.CylinderGeometry(0.77, 0.77, 0.68, 52);
+  G.add(new THREE.Mesh(capGeo, M.titaniumDark).translateY(2.28));
 
-  // Borda Polida Chanfrada na Tampa
-  const capTrimGeo = new THREE.TorusGeometry(0.76, 0.03, 16, 48);
-  capTrimGeo.rotateX(Math.PI / 2);
-  const capTrim = new THREE.Mesh(capTrimGeo, mat.polishedChrome);
-  capTrim.position.y = 2.58;
-  group.add(capTrim);
+  // Anel de empunhadura Diamond-Knurled
+  const gripGeo = new THREE.CylinderGeometry(0.79, 0.79, 0.34, 52);
+  G.add(new THREE.Mesh(gripGeo, M.rubber).translateY(2.28));
 
-  // Display OLED Touch no Topo
-  const oledGeo = new THREE.CircleGeometry(0.62, 40);
-  oledGeo.rotateX(-Math.PI / 2);
-  const oledMat = new THREE.MeshBasicMaterial({ map: capOledTexture });
-  const oledMesh = new THREE.Mesh(oledGeo, oledMat);
-  oledMesh.position.y = 2.59;
-  group.add(oledMesh);
-
-  // Anel LED de Esterilização UV-C
-  const uvcRingGeo = new THREE.TorusGeometry(0.75, 0.05, 16, 48);
-  uvcRingGeo.rotateX(Math.PI / 2);
-  const uvcRing = new THREE.Mesh(uvcRingGeo, mat.neonPurple);
-  uvcRing.position.y = 1.95;
-  group.add(uvcRing);
-
-  // Medidor de Nível de Hidratação Vertical (10 Segmentos de LED Discretos)
-  const segments = [];
-  for (let s = 0; s < 10; s++) {
-    const segGeo = new THREE.BoxGeometry(0.07, 0.16, 0.06);
-    const segMat = (s < 8) ? mat.neonCyan : mat.matteRubber;
-    const seg = new THREE.Mesh(segGeo, segMat);
-    seg.position.set(0, -1.2 + (s * 0.2), 0.98);
-    group.add(seg);
-    segments.push(seg);
+  // Friso cromado chanfrado na tampa
+  for (const dy of [1.96, 2.62]) {
+    const capTrim = new THREE.Mesh(
+      new THREE.TorusGeometry(0.77, 0.025, 12, 52),
+      M.chrome
+    );
+    capTrim.rotation.x = Math.PI / 2;
+    capTrim.position.y = dy;
+    G.add(capTrim);
   }
 
-  // Sombra de chão
-  addContactShadow(group, -1.82, 2.4, 0.5);
+  // Display OLED Circular
+  const oled = new THREE.Mesh(new THREE.CircleGeometry(0.64, 44), new THREE.MeshBasicMaterial({ map: oledTex }));
+  oled.rotation.x = -Math.PI / 2;
+  oled.position.y = 2.63;
+  G.add(oled);
+
+  // Vidro Protetor do Display
+  const oledGlass = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.66, 0.66, 0.04, 44),
+    M.glassClear
+  );
+  oledGlass.position.y = 2.64;
+  G.add(oledGlass);
+
+  // === Anel LED UV-C ===
+  const uvcRing = new THREE.Mesh(
+    new THREE.TorusGeometry(0.76, 0.045, 14, 52),
+    M.neonPurple
+  );
+  uvcRing.rotation.x = Math.PI / 2;
+  uvcRing.position.y = 1.97;
+  G.add(uvcRing);
+
+  // === Medidor de Hidratação: 12 Segmentos de LED ===
+  const segs = [];
+  for (let i = 0; i < 12; i++) {
+    const segGeo = new THREE.BoxGeometry(0.06, 0.14, 0.05);
+    const isFilled = i < 9;
+    const segMat = isFilled ? M.neonCyan : M.panelGap;
+    const seg = new THREE.Mesh(segGeo, segMat);
+    seg.position.set(0, -1.35 + i * 0.22, 0.99);
+    G.add(seg);
+    segs.push(seg);
+  }
+
+  // Porta USB-C Magnética
+  const usbPort = makePanelLine(0.2, 0.08, 0.06);
+  usbPort.position.set(0, -1.5, 0.98);
+  G.add(usbPort);
+
+  addContactShadow(G, -1.87, 2.5, 0.5);
 
   return {
-    group,
+    group: G,
     cameraPos: [0, 0.6, 5.8],
-    update: (time, isSpecial) => {
-      group.position.y = Math.sin(time * 1.8) * 0.05;
-      if (isSpecial) {
-        uvcRing.scale.setScalar(1 + Math.sin(time * 6) * 0.06);
-        // Efeito de pulso suave no nível
-        segments.forEach((seg, i) => {
-          if (i < 8) {
-            seg.scale.x = 1 + Math.sin(time * 4 + i * 0.3) * 0.15;
-          }
+    update(t, fx) {
+      G.position.y = Math.sin(t * 1.8) * 0.04;
+      if (fx) {
+        uvcRing.scale.setScalar(1 + Math.sin(t * 6) * 0.06);
+        segs.forEach((s, i) => {
+          if (i < 9) s.scale.x = 1 + Math.sin(t * 4 + i * 0.3) * 0.15;
         });
       }
     }
   };
 }
 
-// --------------------------------------------------------------------------
-// GADGET 6: Orbital Sound (Caixa de Som Flutuante com Radiador Duplo e Base CNC)
-// --------------------------------------------------------------------------
+// ─────────────────────────────────────────────────────────────────
+// GADGET 6: Orbital Sound
+// ─────────────────────────────────────────────────────────────────
 function buildOrbitalSoundModel() {
-  const group = new THREE.Group();
-  const mat = createRealisticPBRMaterials();
-  const grilleTexture = createMicroGrilleTexture();
+  const G = new THREE.Group();
+  const M = createPBRMaterials();
+  const grilleTex = createMicroGrilleTexture();
 
-  // 1. Base Magnética Circular Maciça com Chanfro de 45° Polido
-  const baseDiscGeo = new THREE.CylinderGeometry(2.4, 2.7, 0.6, 56);
-  const baseMesh = new THREE.Mesh(baseDiscGeo, mat.anodizedAluminum);
-  baseMesh.position.y = -1.65;
-  baseMesh.castShadow = true;
-  group.add(baseMesh);
+  // === Base Magnética Maciça com Chanfro CNC ===
+  const baseGeo = new THREE.CylinderGeometry(2.45, 2.75, 0.65, 60);
+  G.add(new THREE.Mesh(baseGeo, M.aluminum).translateY(-1.65));
 
-  // Borda Chanfrada Polida Espelhada na Base
-  const baseBezelGeo = new THREE.TorusGeometry(2.4, 0.08, 16, 56);
-  baseBezelGeo.rotateX(Math.PI / 2);
-  const baseBezel = new THREE.Mesh(baseBezelGeo, mat.polishedChrome);
-  baseBezel.position.y = -1.35;
-  group.add(baseBezel);
+  // Chanfro de 45° Cromado
+  const chamferGeo = new THREE.TorusGeometry(2.45, 0.09, 14, 60);
+  chamferGeo.rotateX(Math.PI / 2);
+  G.add(new THREE.Mesh(chamferGeo, M.chrome).translateY(-1.32));
 
-  // Botões Capacitivos Flush na Borda Dianteira (+, -, Play, Bluetooth)
-  for (let b = -0.4; b <= 0.4; b += 0.26) {
-    const btnGeo = new THREE.CircleGeometry(0.04, 16);
-    btnGeo.rotateX(-Math.PI / 3);
-    const btn = new THREE.Mesh(btnGeo, mat.neonCyan);
-    btn.position.set(b, -1.4, 2.3);
-    group.add(btn);
+  // Pés de Borracha
+  for (let i = 0; i < 4; i++) {
+    const a = (i / 4) * Math.PI * 2;
+    const foot = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.06, 12), M.rubber);
+    foot.position.set(Math.cos(a) * 2.2, -1.98, Math.sin(a) * 2.2);
+    G.add(foot);
   }
 
-  // Bobinas Concêntricas de Indução Magnética Iluminadas
-  const outerCoilGeo = new THREE.TorusGeometry(1.8, 0.07, 16, 56);
-  outerCoilGeo.rotateX(Math.PI / 2);
-  const outerCoil = new THREE.Mesh(outerCoilGeo, mat.neonCyan);
-  outerCoil.position.y = -1.33;
-  group.add(outerCoil);
+  // Botões Capacitivos Flush Frontais (Play, +, -, BT)
+  for (let b = -0.45; b <= 0.45; b += 0.3) {
+    const btn = new THREE.Mesh(new THREE.CircleGeometry(0.05, 16), M.neonCyan);
+    btn.rotation.x = -Math.PI / 3;
+    btn.position.set(b, -1.38, 2.38);
+    G.add(btn);
+  }
 
-  const innerCoilGeo = new THREE.TorusGeometry(1.0, 0.05, 16, 56);
-  innerCoilGeo.rotateX(Math.PI / 2);
-  const innerCoil = new THREE.Mesh(innerCoilGeo, mat.neonCyan);
-  innerCoil.position.y = -1.33;
-  group.add(innerCoil);
+  // Bobinas Concêntricas de Indução Magnética
+  const outerCoil = new THREE.Mesh(
+    new THREE.TorusGeometry(1.85, 0.065, 14, 60),
+    M.neonCyan
+  );
+  outerCoil.rotation.x = Math.PI / 2;
+  outerCoil.position.y = -1.3;
+  G.add(outerCoil);
 
-  // 2. Esfera Acústica Flutuante com Radiadores Passivos Opostos
-  const orbGroup = new THREE.Group();
-  orbGroup.position.y = 0.8;
+  const innerCoil = new THREE.Mesh(
+    new THREE.TorusGeometry(1.05, 0.045, 14, 60),
+    M.neonCyan
+  );
+  innerCoil.rotation.x = Math.PI / 2;
+  innerCoil.position.y = -1.3;
+  G.add(innerCoil);
 
-  // Esfera Principal em Carbono Acetinado
-  const orbSphereGeo = new THREE.SphereGeometry(1.35, 48, 48);
-  const orbSphere = new THREE.Mesh(orbSphereGeo, mat.brushedTitaniumDark);
-  orbSphere.castShadow = true;
-  orbGroup.add(orbSphere);
+  // Porta USB-C e Conector de Energia
+  G.add(makePanelLine(0.22, 0.08, 0.06).translateY(-1.5).translateZ(2.7));
 
-  // Grelha Acústica Equatorial Micro-perfurada 360°
-  const acousticBandGeo = new THREE.CylinderGeometry(1.37, 1.37, 0.4, 48, 1, true);
-  const acousticBandMat = new THREE.MeshStandardMaterial({
-    map: grilleTexture,
-    metalness: 0.85,
-    roughness: 0.25
-  });
-  const acousticBand = new THREE.Mesh(acousticBandGeo, acousticBandMat);
-  orbGroup.add(acousticBand);
+  // === Esfera Acústica Flutuante ===
+  const orb = new THREE.Group();
+  orb.position.y = 0.8;
 
-  // Anel de Luz Neon da Linha Equatorial de Som
-  const soundRingGeo = new THREE.TorusGeometry(1.38, 0.04, 16, 56);
-  soundRingGeo.rotateX(Math.PI / 2);
-  const soundRing = new THREE.Mesh(soundRingGeo, mat.neonCyan);
-  orbGroup.add(soundRing);
+  // Hemisférios Superior e Inferior com Junção Central
+  const topHemiGeo = new THREE.SphereGeometry(1.38, 52, 26, 0, Math.PI * 2, 0, Math.PI * 0.46);
+  orb.add(new THREE.Mesh(topHemiGeo, M.titaniumDark));
 
-  // Radiador de Graves Superior: Cone de Alumínio e Borda de Borracha
-  const subTopGeo = new THREE.CylinderGeometry(0.75, 0.85, 0.16, 40);
-  const subTop = new THREE.Mesh(subTopGeo, mat.polishedChrome);
-  subTop.position.y = 1.32;
-  orbGroup.add(subTop);
+  const botHemiGeo = new THREE.SphereGeometry(1.38, 52, 26, 0, Math.PI * 2, Math.PI * 0.54, Math.PI * 0.46);
+  orb.add(new THREE.Mesh(botHemiGeo, M.titaniumDark));
 
-  const subRollGeo = new THREE.TorusGeometry(0.85, 0.06, 16, 40);
-  subRollGeo.rotateX(Math.PI / 2);
-  const subRoll = new THREE.Mesh(subRollGeo, mat.matteRubber);
-  subRoll.position.y = 1.32;
-  orbGroup.add(subRoll);
+  // Grelha Equatorial 360° Micro-perfurada
+  const bandGeo = new THREE.CylinderGeometry(1.39, 1.39, 0.42, 52, 1, true);
+  orb.add(new THREE.Mesh(bandGeo, new THREE.MeshStandardMaterial({
+    map: grilleTex, metalness: 0.85, roughness: 0.22
+  })));
 
-  // Radiador de Graves Inferior Oposto (Equilíbrio Físico)
-  const subBottomGeo = new THREE.CylinderGeometry(0.85, 0.75, 0.16, 40);
-  const subBottom = new THREE.Mesh(subBottomGeo, mat.polishedChrome);
-  subBottom.position.y = -1.32;
-  orbGroup.add(subBottom);
+  // Anel Neon Equatorial
+  const soundRing = new THREE.Mesh(
+    new THREE.TorusGeometry(1.4, 0.04, 14, 60),
+    M.neonCyan
+  );
+  soundRing.rotation.x = Math.PI / 2;
+  orb.add(soundRing);
 
-  group.add(orbGroup);
+  // Radiador Passivo de Graves Superior e Inferior
+  for (const s of [1, -1]) {
+    const subGeo = new THREE.CylinderGeometry(0.78, 0.88, 0.14, 44);
+    const sub = new THREE.Mesh(subGeo, M.chrome);
+    sub.position.y = s * 1.34;
+    orb.add(sub);
 
-  // 3. Ondas Sonoras Expansivas Esféricas em Wireframe
-  const waveList = [];
+    // Anel de borracha do radiador
+    const rubRing = new THREE.Mesh(
+      new THREE.TorusGeometry(0.88, 0.055, 14, 44),
+      M.rubber
+    );
+    rubRing.rotation.x = Math.PI / 2;
+    rubRing.position.y = s * 1.34;
+    orb.add(rubRing);
+
+    // Calota dome do radiador
+    const domeGeo = new THREE.SphereGeometry(0.65, 24, 12, 0, Math.PI * 2, 0, Math.PI * 0.3);
+    if (s < 0) domeGeo.rotateX(Math.PI);
+    const dome = new THREE.Mesh(domeGeo, M.titaniumPolished);
+    dome.position.y = s * 1.36;
+    orb.add(dome);
+  }
+
+  // Logo "GT" Gravado na Esfera
+  const orbLogo = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.4, 0.2),
+    new THREE.MeshBasicMaterial({
+      map: createLogoEngravingTexture(),
+      transparent: true, depthWrite: false
+    })
+  );
+  orbLogo.position.set(0, 0.7, 1.4);
+  orbLogo.rotation.x = -0.35;
+  orb.add(orbLogo);
+
+  G.add(orb);
+
+  // === Ondas Sonoras ===
+  const waves = [];
   for (let i = 0; i < 2; i++) {
-    const waveGeo = new THREE.SphereGeometry(1.75 + (i * 0.5), 24, 24);
-    const waveMat = new THREE.MeshBasicMaterial({
-      color: 0x38bdf8,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.22 - (i * 0.09)
+    const wGeo = new THREE.SphereGeometry(1.8 + i * 0.55, 24, 24);
+    const wMat = new THREE.MeshBasicMaterial({
+      color: 0x38bdf8, wireframe: true, transparent: true,
+      opacity: 0.2 - i * 0.08
     });
-    const wave = new THREE.Mesh(waveGeo, waveMat);
-    orbGroup.add(wave);
-    waveList.push(wave);
+    const w = new THREE.Mesh(wGeo, wMat);
+    orb.add(w);
+    waves.push(w);
   }
 
-  // Sombra de chão suave sob a base magnética
-  addContactShadow(group, -1.95, 3.4, 0.55);
+  addContactShadow(G, -2.0, 3.5, 0.55);
+
+  const subTop = orb.children.find((c, i) => i === 4); // Referência ao radiador superior
+  const subBot = orb.children.find((c, i) => i === 7); // Referência ao radiador inferior
 
   return {
-    group,
+    group: G,
     cameraPos: [0, 0.4, 6.2],
-    update: (time, isSpecial) => {
-      orbGroup.position.y = 0.8 + Math.sin(time * 2.6) * 0.14;
-      orbGroup.rotation.y = time * 0.6;
-
-      if (isSpecial) {
-        waveList.forEach((w, idx) => {
+    update(t, fx) {
+      orb.position.y = 0.8 + Math.sin(t * 2.6) * 0.14;
+      orb.rotation.y = t * 0.6;
+      if (fx) {
+        waves.forEach((w, i) => {
           w.visible = true;
-          const s = 1 + (Math.sin(time * 6 + idx * 1.5) + 1) * 0.1;
+          const s = 1 + (Math.sin(t * 6 + i * 1.5) + 1) * 0.1;
           w.scale.set(s, s, s);
         });
-        outerCoil.scale.setScalar(1 + Math.sin(time * 4) * 0.04);
-        // Vibração física dos radiadores de graves opostos
-        subTop.position.y = 1.32 + Math.sin(time * 12) * 0.02;
-        subBottom.position.y = -1.32 - Math.sin(time * 12) * 0.02;
+        outerCoil.scale.setScalar(1 + Math.sin(t * 4) * 0.04);
       } else {
-        waveList.forEach(w => w.visible = false);
+        waves.forEach(w => w.visible = false);
       }
     }
   };
 }
 
-// Factory de Criação de Modelo por ID
-function createGadgetModel(productId) {
-  switch (productId) {
+// ═══════════════════════════════════════════════════════════════════
+// 4. FACTORY & INTEGRAÇÃO
+// ═══════════════════════════════════════════════════════════════════
+
+function createGadgetModel(id) {
+  switch (id) {
     case 1: return buildVisionARModel();
     case 2: return buildPulseTouchModel();
     case 3: return buildAuraRingModel();
@@ -1237,278 +1538,178 @@ function createGadgetModel(productId) {
   }
 }
 
-// ==========================================================================
-// 4. Integração nos Cards do Catálogo (Preview Interativo 3D a 60 FPS)
-// ==========================================================================
+// ═══════════════════════════════════════════════════════════════════
+// 5. RENDERIZAÇÃO NOS CARDS DO CATÁLOGO
+// ═══════════════════════════════════════════════════════════════════
 
 function initCard3DViewers() {
-  const cards = document.querySelectorAll('.product-card');
-
-  cards.forEach(card => {
-    const productId = parseInt(card.getAttribute('data-id'), 10);
+  document.querySelectorAll('.product-card').forEach(card => {
+    const id = parseInt(card.getAttribute('data-id'), 10);
     const container = card.querySelector('.product-3d-canvas-container');
-    if (!container || container.getAttribute('data-initialized') === 'true') return;
+    if (!container || container.getAttribute('data-init') === '1') return;
+    container.setAttribute('data-init', '1');
 
-    container.setAttribute('data-initialized', 'true');
-
-    const width = container.clientWidth || 320;
-    const height = 230;
-
+    const w = container.clientWidth || 320, h = 230;
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+    const cam = new THREE.PerspectiveCamera(40, w / h, 0.1, 100);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
-    renderer.outputEncoding = THREE.sRGBEncoding;
-    container.appendChild(renderer.domElement);
+    const ren = new THREE.WebGLRenderer({
+      antialias: true, alpha: true, powerPreference: 'high-performance'
+    });
+    ren.setSize(w, h);
+    ren.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    ren.toneMapping = THREE.ACESFilmicToneMapping;
+    ren.toneMappingExposure = 1.2;
+    ren.outputEncoding = THREE.sRGBEncoding;
+    container.appendChild(ren.domElement);
 
-    const envMap = getOrCreateStudioEnvironment(renderer);
-    scene.environment = envMap;
+    scene.environment = getOrCreateStudioEnvironment(ren);
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
-    scene.add(ambientLight);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+    const k = new THREE.DirectionalLight(0xe0f2fe, 2.2);
+    k.position.set(5, 6, 5); scene.add(k);
+    const f = new THREE.DirectionalLight(0x38bdf8, 1.4);
+    f.position.set(-5, -2, -3); scene.add(f);
+    scene.add(new THREE.DirectionalLight(0xc084fc, 1.0).translateY(-4).translateZ(4));
 
-    const keyLight = new THREE.DirectionalLight(0xe0f2fe, 2.2);
-    keyLight.position.set(5, 6, 5);
-    scene.add(keyLight);
+    const mdl = createGadgetModel(id);
+    scene.add(mdl.group);
+    const [cx, cy, cz] = mdl.cameraPos;
+    cam.position.set(cx, cy, cz);
+    cam.lookAt(0, 0, 0);
 
-    const fillLight = new THREE.DirectionalLight(0x38bdf8, 1.4);
-    fillLight.position.set(-5, -2, -3);
-    scene.add(fillLight);
-
-    const rimLight = new THREE.DirectionalLight(0xc084fc, 1.2);
-    rimLight.position.set(0, -4, 4);
-    scene.add(rimLight);
-
-    const modelData = createGadgetModel(productId);
-    scene.add(modelData.group);
-
-    const [cx, cy, cz] = modelData.cameraPos;
-    camera.position.set(cx, cy, cz);
-    camera.lookAt(0, 0, 0);
-
-    let isDragging = false;
-    let prevMouseX = 0;
-    let prevMouseY = 0;
-    let rotY = 0;
-    let rotX = 0;
-    let isHovered = false;
-
-    const dom = renderer.domElement;
-    dom.addEventListener('pointerenter', () => { isHovered = true; });
-    dom.addEventListener('pointerleave', () => { isHovered = false; isDragging = false; });
-
-    dom.addEventListener('pointerdown', (e) => {
-      isDragging = true;
-      prevMouseX = e.clientX;
-      prevMouseY = e.clientY;
-      dom.style.cursor = 'grabbing';
+    let dragging = false, prevX = 0, prevY = 0, rotY = 0, rotX = 0, hovered = false;
+    const dom = ren.domElement;
+    dom.addEventListener('pointerenter', () => hovered = true);
+    dom.addEventListener('pointerleave', () => { hovered = false; dragging = false; });
+    dom.addEventListener('pointerdown', e => { dragging = true; prevX = e.clientX; prevY = e.clientY; dom.style.cursor = 'grabbing'; });
+    window.addEventListener('pointerup', () => { dragging = false; dom.style.cursor = 'grab'; });
+    window.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      rotY += (e.clientX - prevX) * 0.012;
+      rotX += (e.clientY - prevY) * 0.012;
+      prevX = e.clientX; prevY = e.clientY;
     });
 
-    window.addEventListener('pointerup', () => {
-      isDragging = false;
-      dom.style.cursor = 'grab';
-    });
+    let vis = true;
+    new IntersectionObserver(en => vis = en[0].isIntersecting, { threshold: 0.1 }).observe(container);
 
-    window.addEventListener('pointermove', (e) => {
-      if (!isDragging) return;
-      const dx = e.clientX - prevMouseX;
-      const dy = e.clientY - prevMouseY;
-      rotY += dx * 0.012;
-      rotX += dy * 0.012;
-      prevMouseX = e.clientX;
-      prevMouseY = e.clientY;
-    });
-
-    let isVisible = true;
-    const observer = new IntersectionObserver((entries) => {
-      isVisible = entries[0].isIntersecting;
-    }, { threshold: 0.1 });
-    observer.observe(container);
-
-    let clock = new THREE.Clock();
-
-    function renderLoop() {
-      requestAnimationFrame(renderLoop);
-      if (!isVisible) return;
-
-      const elapsedTime = clock.getElapsedTime();
-
-      if (!isDragging) {
-        rotY += isHovered ? 0.014 : 0.007;
-      }
-
-      modelData.group.rotation.y = rotY;
-      modelData.group.rotation.x = rotX * 0.4;
-
-      modelData.update(elapsedTime, true);
-      renderer.render(scene, camera);
-    }
-
-    renderLoop();
+    const clk = new THREE.Clock();
+    (function loop() {
+      requestAnimationFrame(loop);
+      if (!vis) return;
+      const t = clk.getElapsedTime();
+      if (!dragging) rotY += hovered ? 0.014 : 0.007;
+      mdl.group.rotation.y = rotY;
+      mdl.group.rotation.x = rotX * 0.4;
+      mdl.update(t, true);
+      ren.render(scene, cam);
+    })();
   });
 }
 
-// ==========================================================================
-// 5. Studio 3D 360° Fullscreen Modal
-// ==========================================================================
+// ═══════════════════════════════════════════════════════════════════
+// 6. STUDIO 3D 360° FULLSCREEN
+// ═══════════════════════════════════════════════════════════════════
 
 function open3DModal(productId) {
   const modal = document.getElementById('modal-3d-viewer');
   const container = document.getElementById('modal-3d-canvas');
-  const titleEl = document.getElementById('modal-3d-title');
-  const catEl = document.getElementById('modal-3d-category');
-  const descEl = document.getElementById('modal-3d-desc');
-  const priceEl = document.getElementById('modal-3d-price');
-  const addBtn = document.getElementById('modal-3d-add-btn');
-
   const product = products.find(p => p.id === productId);
   if (!product || !modal || !container) return;
 
-  titleEl.textContent = product.name;
-  catEl.textContent = product.category;
-  descEl.textContent = product.description;
-  priceEl.textContent = formatCurrency(product.price);
-  addBtn.onclick = () => {
-    addToCart(product.id);
-  };
+  document.getElementById('modal-3d-title').textContent = product.name;
+  document.getElementById('modal-3d-category').textContent = product.category;
+  document.getElementById('modal-3d-desc').textContent = product.description;
+  document.getElementById('modal-3d-price').textContent = formatCurrency(product.price);
+  document.getElementById('modal-3d-add-btn').onclick = () => addToCart(product.id);
 
   modal.classList.add('active');
   document.body.style.overflow = 'hidden';
-
   initModal3DScene(productId, container);
 }
 
 function close3DModal() {
   const modal = document.getElementById('modal-3d-viewer');
-  if (modal) {
-    modal.classList.remove('active');
-  }
+  if (modal) modal.classList.remove('active');
   document.body.style.overflow = '';
-
-  if (Gadget3DManager.modalAnimFrame) {
-    cancelAnimationFrame(Gadget3DManager.modalAnimFrame);
-  }
+  if (Gadget3DManager.modalAnimFrame) cancelAnimationFrame(Gadget3DManager.modalAnimFrame);
 }
 
 function initModal3DScene(productId, container) {
   container.innerHTML = '';
-
-  const width = container.clientWidth;
-  const height = container.clientHeight;
+  const w = container.clientWidth, h = container.clientHeight;
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x060a12, 0.05);
+  scene.fog = new THREE.FogExp2(0x050810, 0.04);
+  const cam = new THREE.PerspectiveCamera(45, w / h, 0.1, 100);
 
-  const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+  const ren = new THREE.WebGLRenderer({ antialias: true });
+  ren.setSize(w, h);
+  ren.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  ren.setClearColor(0x050810, 1);
+  ren.toneMapping = THREE.ACESFilmicToneMapping;
+  ren.toneMappingExposure = 1.2;
+  ren.outputEncoding = THREE.sRGBEncoding;
+  container.appendChild(ren.domElement);
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-  renderer.setSize(width, height);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setClearColor(0x060a12, 1);
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.15;
-  renderer.outputEncoding = THREE.sRGBEncoding;
-  container.appendChild(renderer.domElement);
+  scene.environment = getOrCreateStudioEnvironment(ren);
 
-  const envMap = getOrCreateStudioEnvironment(renderer);
-  scene.environment = envMap;
+  // Grid
+  scene.add(new THREE.GridHelper(20, 36, 0x00f2fe, 0x162035).translateY(-2.1));
 
-  // Grade de Chão de Estúdio Cyberpunk
-  const gridHelper = new THREE.GridHelper(18, 32, 0x00f2fe, 0x1e293b);
-  gridHelper.position.y = -2.1;
-  scene.add(gridHelper);
+  // Luzes
+  scene.add(new THREE.AmbientLight(0xffffff, 0.85));
+  const s1 = new THREE.SpotLight(0xe0f2fe, 3.5, 30, Math.PI / 4, 0.3);
+  s1.position.set(6, 8, 6); scene.add(s1);
+  const s2 = new THREE.SpotLight(0xc084fc, 2.5, 30, Math.PI / 4, 0.3);
+  s2.position.set(-6, 3, -6); scene.add(s2);
+  scene.add(new THREE.PointLight(0x00f2fe, 2.0, 10).translateY(-2));
 
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
-  scene.add(ambientLight);
+  const mdl = createGadgetModel(productId);
+  scene.add(mdl.group);
+  const [cx, cy, cz] = mdl.cameraPos;
+  cam.position.set(cx, cy + 0.4, cz + 1.2);
 
-  const spot1 = new THREE.SpotLight(0xe0f2fe, 3.5, 30, Math.PI / 4, 0.3);
-  spot1.position.set(6, 8, 6);
-  scene.add(spot1);
-
-  const spot2 = new THREE.SpotLight(0xc084fc, 2.5, 30, Math.PI / 4, 0.3);
-  spot2.position.set(-6, 3, -6);
-  scene.add(spot2);
-
-  const neonUnder = new THREE.PointLight(0x00f2fe, 2.0, 10);
-  neonUnder.position.set(0, -2.0, 0);
-  scene.add(neonUnder);
-
-  const modelData = createGadgetModel(productId);
-  scene.add(modelData.group);
-
-  const [cx, cy, cz] = modelData.cameraPos;
-  camera.position.set(cx, cy + 0.4, cz + 1.2);
-
-  let controls;
+  let ctrl;
   if (typeof THREE.OrbitControls !== 'undefined') {
-    controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.maxDistance = 14;
-    controls.minDistance = 2.4;
-    controls.target.set(0, 0, 0);
+    ctrl = new THREE.OrbitControls(cam, ren.domElement);
+    ctrl.enableDamping = true; ctrl.dampingFactor = 0.05;
+    ctrl.maxDistance = 14; ctrl.minDistance = 2.4;
+    ctrl.target.set(0, 0, 0);
   }
 
-  Gadget3DManager.modalScene = scene;
-  Gadget3DManager.modalCamera = camera;
-  Gadget3DManager.modalRenderer = renderer;
-  Gadget3DManager.modalControls = controls;
-  Gadget3DManager.modalCurrentModel = modelData;
-  Gadget3DManager.modalCurrentId = productId;
+  Object.assign(Gadget3DManager, {
+    modalScene: scene, modalCamera: cam, modalRenderer: ren,
+    modalControls: ctrl, modalCurrentModel: mdl, modalCurrentId: productId
+  });
 
-  const handleResize = () => {
-    if (!container) return;
-    const w = container.clientWidth;
-    const h = container.clientHeight;
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-    renderer.setSize(w, h);
-  };
-  window.addEventListener('resize', handleResize);
+  window.addEventListener('resize', () => {
+    const nw = container.clientWidth, nh = container.clientHeight;
+    cam.aspect = nw / nh; cam.updateProjectionMatrix();
+    ren.setSize(nw, nh);
+  });
 
-  let clock = new THREE.Clock();
-
-  function animateModal() {
-    Gadget3DManager.modalAnimFrame = requestAnimationFrame(animateModal);
-
-    const elapsedTime = clock.getElapsedTime();
-
-    if (controls) {
-      if (Gadget3DManager.isAutoRotate) {
-        modelData.group.rotation.y += 0.007;
-      }
-      controls.update();
-    }
-
-    modelData.update(elapsedTime, Gadget3DManager.isSpecialEffectActive);
-    renderer.render(scene, camera);
-  }
-
-  animateModal();
+  const clk = new THREE.Clock();
+  (function animate() {
+    Gadget3DManager.modalAnimFrame = requestAnimationFrame(animate);
+    const t = clk.getElapsedTime();
+    if (ctrl) { if (Gadget3DManager.isAutoRotate) mdl.group.rotation.y += 0.006; ctrl.update(); }
+    mdl.update(t, Gadget3DManager.isSpecialEffectActive);
+    ren.render(scene, cam);
+  })();
 }
 
 function toggleAutoRotate() {
   Gadget3DManager.isAutoRotate = !Gadget3DManager.isAutoRotate;
-  const btn = document.getElementById('btn-toggle-rotate');
-  if (btn) {
-    btn.classList.toggle('active', Gadget3DManager.isAutoRotate);
-    btn.innerHTML = Gadget3DManager.isAutoRotate ? '🔄 Rotação: Ligada' : '⏸️ Rotação: Pausada';
-  }
+  const b = document.getElementById('btn-toggle-rotate');
+  if (b) { b.classList.toggle('active', Gadget3DManager.isAutoRotate); b.innerHTML = Gadget3DManager.isAutoRotate ? '🔄 Rotação: Ligada' : '⏸️ Rotação: Pausada'; }
 }
-
 function toggleSpecialEffect() {
   Gadget3DManager.isSpecialEffectActive = !Gadget3DManager.isSpecialEffectActive;
-  const btn = document.getElementById('btn-toggle-fx');
-  if (btn) {
-    btn.classList.toggle('active', Gadget3DManager.isSpecialEffectActive);
-    btn.innerHTML = Gadget3DManager.isSpecialEffectActive ? '⚡ Efeitos Especiais: Ligados' : '⚪ Efeitos: Desligados';
-  }
+  const b = document.getElementById('btn-toggle-fx');
+  if (b) { b.classList.toggle('active', Gadget3DManager.isSpecialEffectActive); b.innerHTML = Gadget3DManager.isSpecialEffectActive ? '⚡ Efeitos Especiais: Ligados' : '⚪ Efeitos: Desligados'; }
 }
-
 function reset3DCamera() {
   if (Gadget3DManager.modalCurrentModel && Gadget3DManager.modalCamera && Gadget3DManager.modalControls) {
     const [cx, cy, cz] = Gadget3DManager.modalCurrentModel.cameraPos;
