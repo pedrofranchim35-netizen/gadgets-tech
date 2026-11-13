@@ -461,15 +461,26 @@ function createPBRMaterials() {
     // Vidro de Safira Fotorrealista
     sapphire: new THREE.MeshPhysicalMaterial({
       color: 0x38bdf8,
-      metalness: 0.02,
-      roughness: 0.02,
-      transmission: 0.92,
+      metalness: 0.05,
+      roughness: 0.03,
       transparent: true,
-      opacity: 0.9,
+      opacity: 0.72,
       clearcoat: 1.0,
       clearcoatRoughness: 0.02,
-      ior: 1.77,
-      reflectivity: 0.9
+      reflectivity: 0.95,
+      depthWrite: true
+    }),
+    // Lentes AR Fumê com Revestimento Anti-Reflexo e Refração
+    arLens: new THREE.MeshPhysicalMaterial({
+      color: 0x061826,
+      metalness: 0.12,
+      roughness: 0.04,
+      transparent: true,
+      opacity: 0.84,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.02,
+      reflectivity: 0.98,
+      depthWrite: true
     }),
     // Vidro Transparente Puro
     glassClear: new THREE.MeshPhysicalMaterial({
@@ -589,8 +600,8 @@ function buildVisionARModel() {
   browShape.bezierCurveTo(1.5, 0.58, -1.5, 0.58, -3.0, 0.12);
   browShape.closePath();
   const browGeo = new THREE.ExtrudeGeometry(browShape, {
-    depth: 0.38, bevelEnabled: true, bevelSegments: 5,
-    steps: 3, bevelSize: 0.07, bevelThickness: 0.07
+    depth: 0.38, bevelEnabled: true, bevelSegments: 4,
+    steps: 3, bevelSize: 0.06, bevelThickness: 0.06
   });
   G.add(new THREE.Mesh(browGeo, M.titaniumDark));
 
@@ -627,15 +638,11 @@ function buildVisionARModel() {
 
   // === Câmeras Estereoscópicas Frontais ===
   for (const s of [-1, 1]) {
-    // Aro Cromado
-    const camRing = new THREE.Mesh(
-      new THREE.TorusGeometry(0.08, 0.018, 12, 20),
-      M.chrome
-    );
+    const camRing = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.018, 12, 20), M.chrome);
     camRing.position.set(s * 2.6, 0.4, 0.42);
     camRing.rotation.x = Math.PI / 2;
     G.add(camRing);
-    // Lente Escura
+
     const camLens = new THREE.Mesh(
       new THREE.SphereGeometry(0.065, 16, 16, 0, Math.PI * 2, 0, Math.PI * 0.45),
       M.oledBlack
@@ -644,136 +651,187 @@ function buildVisionARModel() {
     camLens.rotation.x = -Math.PI / 2;
     G.add(camLens);
 
-    // Microfone Pinhole
-    const mic = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.018, 0.018, 0.04, 10),
-      M.panelGap
-    );
+    const mic = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.04, 10), M.panelGap);
     mic.rotation.x = Math.PI / 2;
     mic.position.set(s * 0.45, 0.6, 0.38);
     G.add(mic);
   }
 
-  // === Nosepads em Silicone com Braços de Titânio ===
+  // === Lentes de Precisão Óptica e Aros de Titânio ===
+  function makeLensContour(w, h) {
+    const s = new THREE.Shape();
+    s.moveTo(-w + 0.25, h);
+    s.lineTo(w - 0.25, h);
+    s.quadraticCurveTo(w, h, w, h - 0.22);
+    s.lineTo(w - 0.1, -h + 0.32);
+    s.quadraticCurveTo(w - 0.16, -h, w - 0.45, -h);
+    s.lineTo(-w + 0.45, -h);
+    s.quadraticCurveTo(-w + 0.12, -h, -w, -h + 0.32);
+    s.lineTo(-w, h - 0.22);
+    s.quadraticCurveTo(-w, h, -w + 0.25, h);
+    return s;
+  }
+
+  function makeRimContour(w, h, th) {
+    const s = new THREE.Shape();
+    const wo = w + th, ho = h + th;
+    s.moveTo(-wo + 0.25, ho);
+    s.lineTo(wo - 0.25, ho);
+    s.quadraticCurveTo(wo, ho, wo, ho - 0.22);
+    s.lineTo(wo - 0.1, -ho + 0.32);
+    s.quadraticCurveTo(wo - 0.16, -ho, wo - 0.45, -ho);
+    s.lineTo(-wo + 0.45, -ho);
+    s.quadraticCurveTo(-wo + 0.12, -ho, -wo, -ho + 0.32);
+    s.lineTo(-wo, ho - 0.22);
+    s.quadraticCurveTo(-wo, ho, -wo + 0.25, ho);
+
+    const hole = new THREE.Path();
+    hole.moveTo(-w + 0.25, h);
+    hole.lineTo(w - 0.25, h);
+    hole.quadraticCurveTo(w, h, w, h - 0.22);
+    hole.lineTo(w - 0.1, -h + 0.32);
+    hole.quadraticCurveTo(w - 0.16, -h, w - 0.45, -h);
+    hole.lineTo(-w + 0.45, -h);
+    hole.quadraticCurveTo(-w + 0.12, -h, -w, -h + 0.32);
+    hole.lineTo(-w, h - 0.22);
+    hole.quadraticCurveTo(-w, h, -w + 0.25, h);
+
+    s.holes.push(hole);
+    return s;
+  }
+
+  const lensGeo = new THREE.ExtrudeGeometry(makeLensContour(1.05, 0.65), {
+    depth: 0.05, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.02, bevelSegments: 3
+  });
+  const rimGeo = new THREE.ExtrudeGeometry(makeRimContour(1.05, 0.65, 0.055), {
+    depth: 0.09, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.02, bevelSegments: 2
+  });
+
   for (const s of [-1, 1]) {
-    // Braço articulado
-    const arm = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.015, 0.015, 0.4, 10),
-      M.titaniumPolished
-    );
-    arm.position.set(s * 0.38, 0.08, 0.08);
-    arm.rotation.z = s * 0.4;
+    // Aro usinado CNC em titânio
+    const rim = new THREE.Mesh(rimGeo, M.titaniumDark);
+    rim.position.set(s * 1.5, -0.32, 0.14);
+    rim.rotation.y = -s * 0.06;
+    G.add(rim);
+
+    // Lente translúcida com PBR de alta definição
+    const lens = new THREE.Mesh(lensGeo, M.arLens);
+    lens.position.set(s * 1.5, -0.32, 0.155);
+    lens.rotation.y = -s * 0.06;
+    G.add(lens);
+
+    // Micro-prisma óptico projetor no canto superior externo
+    const prismGeo = new THREE.BoxGeometry(0.12, 0.1, 0.14);
+    const prism = new THREE.Mesh(prismGeo, M.chrome);
+    prism.position.set(s * 2.45, 0.22, 0.22);
+    G.add(prism);
+    const prismEmitter = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.06, 0.02), M.neonCyan);
+    prismEmitter.position.set(s * 2.4, 0.22, 0.28);
+    G.add(prismEmitter);
+  }
+
+  // HUD Holográfico no interior da lente direita
+  const hudPlane = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.9, 1.1),
+    new THREE.MeshBasicMaterial({
+      map: hud.texture,
+      transparent: true,
+      opacity: 0.95,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending
+    })
+  );
+  hudPlane.position.set(1.5, -0.32, 0.22);
+  hudPlane.rotation.y = -0.06;
+  G.add(hudPlane);
+
+  // === Nosepads em Silicone com Braços Articulados ===
+  for (const s of [-1, 1]) {
+    const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.35, 10), M.titaniumPolished);
+    arm.position.set(s * 0.36, -0.02, 0.08);
+    arm.rotation.z = s * 0.35;
     G.add(arm);
 
-    // Pad de silicone
     const padShape = new THREE.Shape();
-    padShape.moveTo(-0.08, -0.14);
-    padShape.quadraticCurveTo(-0.1, 0, -0.06, 0.14);
-    padShape.quadraticCurveTo(0, 0.16, 0.06, 0.14);
-    padShape.quadraticCurveTo(0.1, 0, 0.08, -0.14);
+    padShape.moveTo(-0.07, -0.12);
+    padShape.quadraticCurveTo(-0.09, 0, -0.05, 0.12);
+    padShape.quadraticCurveTo(0, 0.14, 0.05, 0.12);
+    padShape.quadraticCurveTo(0.09, 0, 0.07, -0.12);
     padShape.closePath();
     const padGeo = new THREE.ExtrudeGeometry(padShape, {
-      depth: 0.06, bevelEnabled: true, bevelSize: 0.02,
-      bevelThickness: 0.02, bevelSegments: 3
+      depth: 0.05, bevelEnabled: true, bevelSize: 0.018, bevelThickness: 0.018, bevelSegments: 3
     });
     const pad = new THREE.Mesh(padGeo, M.silicone);
-    pad.position.set(s * 0.5, -0.08, 0.05);
+    pad.position.set(s * 0.46, -0.15, 0.05);
     pad.rotation.y = s * 0.3;
     G.add(pad);
   }
 
-  // === Lentes Curvadas de Safira ===
-  for (const s of [-1, 1]) {
-    const lensGeo = new THREE.SphereGeometry(8, 40, 30, 
-      Math.PI * 0.48 + (s > 0 ? 0 : Math.PI * 0.04),
-      Math.PI * 0.04,
-      Math.PI * 0.44, Math.PI * 0.12
-    );
-    const lens = new THREE.Mesh(lensGeo, M.sapphire);
-    lens.position.set(s * 1.55, -0.3, -7.6);
-    G.add(lens);
-  }
-
-  // HUD Holográfico
-  const hudPlane = new THREE.Mesh(
-    new THREE.PlaneGeometry(2.1, 1.05),
-    new THREE.MeshBasicMaterial({
-      map: hud.texture, transparent: true, opacity: 0.92, depthWrite: false
-    })
-  );
-  hudPlane.position.set(1.55, -0.3, 0.24);
-  hudPlane.rotation.y = -0.08;
-  G.add(hudPlane);
-
   // === Hastes com Dobradiças, Parafusos e Alto-falantes ===
   for (const s of [-1, 1]) {
     // Dobradiça
-    const hinge = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.13, 0.13, 0.3, 18),
-      M.titaniumPolished
-    );
-    hinge.position.set(s * 2.95, 0.32, -0.05);
+    const hinge = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.3, 18), M.titaniumPolished);
+    hinge.position.set(s * 2.92, 0.3, 0.0);
     G.add(hinge);
 
-    // Parafusos na dobradiça
-    for (const py of [0.42, 0.22]) {
+    // Micro-parafusos Torx na dobradiça
+    for (const py of [0.4, 0.2]) {
       const scr = makeScrew(M.chrome);
-      scr.position.set(s * 2.95, py, -0.05);
+      scr.position.set(s * 2.92, py, 0.0);
       G.add(scr);
     }
 
-    // Haste principal em Alumínio
-    const templeGeo = new THREE.CylinderGeometry(0.1, 0.14, 3.5, 20);
+    // Haste principal
+    const templeGeo = new THREE.CylinderGeometry(0.09, 0.13, 3.6, 20);
     templeGeo.rotateX(Math.PI / 2);
     const temple = new THREE.Mesh(templeGeo, M.aluminum);
-    temple.position.set(s * 2.88, 0.32, -1.8);
+    temple.position.set(s * 2.85, 0.3, -1.8);
     temple.rotation.y = -s * 0.06;
     G.add(temple);
 
-    // Linha de antena na haste
+    // Linha de antena
     const antennaLine = makePanelLine(0.008, 0.008, 1.5);
-    antennaLine.position.set(s * 2.88, 0.42, -1.5);
+    antennaLine.position.set(s * 2.85, 0.4, -1.5);
     G.add(antennaLine);
 
-    // Alto-falante por condução óssea
-    const spkGeo = new THREE.BoxGeometry(0.2, 0.25, 0.65);
+    // Módulo de áudio por condução óssea
+    const spkGeo = new THREE.BoxGeometry(0.18, 0.22, 0.65);
     const spk = new THREE.Mesh(spkGeo, M.titaniumDark);
-    spk.position.set(s * 2.84, 0.32, -1.2);
+    spk.position.set(s * 2.82, 0.3, -1.2);
     G.add(spk);
-    // Grelha do alto-falante
     const spkGrille = new THREE.Mesh(
-      new THREE.PlaneGeometry(0.16, 0.45),
+      new THREE.PlaneGeometry(0.14, 0.45),
       new THREE.MeshStandardMaterial({
         map: createMicroGrilleTexture(), metalness: 0.8, roughness: 0.3
       })
     );
-    spkGrille.position.set(s * (2.84 + s * 0.11), 0.32, -1.2);
+    spkGrille.position.set(s * (2.82 + s * 0.1), 0.3, -1.2);
     spkGrille.rotation.y = s * Math.PI / 2;
     G.add(spkGrille);
 
-    // Ponteira Anatômica
-    const tipGeo = new THREE.CylinderGeometry(0.07, 0.1, 1.1, 16);
+    // Ponteira em borracha ergonômica
+    const tipGeo = new THREE.CylinderGeometry(0.065, 0.09, 1.1, 16);
     tipGeo.rotateX(Math.PI / 2.3);
-    G.add(new THREE.Mesh(tipGeo, M.rubber).translateX(s * 2.78).translateY(0.2).translateZ(-3.85));
+    G.add(new THREE.Mesh(tipGeo, M.rubber).translateX(s * 2.76).translateY(0.18).translateZ(-3.85));
 
-    // LED de Status na Haste
-    const led = new THREE.Mesh(new THREE.SphereGeometry(0.03, 10, 10), M.neonGreen);
-    led.position.set(s * 2.88, 0.44, -0.4);
+    // LED de status
+    const led = new THREE.Mesh(new THREE.SphereGeometry(0.028, 10, 10), M.neonGreen);
+    led.position.set(s * 2.85, 0.42, -0.4);
     G.add(led);
   }
 
-  // Porta USB-C de Carga na Ponta da Haste Direita
-  const usbSlot = makePanelLine(0.22, 0.08, 0.06);
-  usbSlot.position.set(2.76, 0.2, -3.3);
+  // Porta USB-C na ponta da haste direita
+  const usbSlot = makePanelLine(0.2, 0.07, 0.05);
+  usbSlot.position.set(2.74, 0.18, -3.3);
   G.add(usbSlot);
 
-  addContactShadow(G, -1.4, 3.5, 0.45);
+  addContactShadow(G, -1.35, 3.4, 0.45);
 
   return {
     group: G,
-    cameraPos: [0, 0.2, 5.4],
+    cameraPos: [0, 0.15, 5.2],
     update(t, fx) {
-      G.position.y = Math.sin(t * 1.8) * 0.05;
+      G.position.y = Math.sin(t * 1.8) * 0.04;
       if (fx) { hudPlane.visible = true; hud.draw(t); hud.texture.needsUpdate = true; }
       else { hudPlane.visible = false; }
     }
@@ -788,170 +846,206 @@ function buildPulseTouchModel() {
   const M = createPBRMaterials();
   const screen = createSmartwatchScreenCanvas();
 
-  // === Pulseira com Ventilação e Textura ===
-  const strapGeo = new THREE.TorusGeometry(1.95, 0.44, 28, 80, Math.PI * 1.85);
-  strapGeo.rotateX(Math.PI / 2);
-  strapGeo.rotateZ(Math.PI * 0.07);
-  G.add(new THREE.Mesh(strapGeo, M.rubber));
+  // === Pulseira Esportiva de Precisão Ergonômica (Fluroelastômero) ===
+  function createStrapHalf(isTop) {
+    const dir = isTop ? 1 : -1;
+    const shape = new THREE.Shape();
+    const w = 0.8;
+    const t = 0.075;
+    shape.moveTo(-w + 0.05, -t);
+    shape.lineTo(w - 0.05, -t);
+    shape.quadraticCurveTo(w, -t, w, 0);
+    shape.quadraticCurveTo(w, t, w - 0.05, t);
+    shape.lineTo(-w + 0.05, t);
+    shape.quadraticCurveTo(-w, t, -w, 0);
+    shape.quadraticCurveTo(-w, -t, -w + 0.05, -t);
 
-  // Perfurações de ventilação
-  for (let a = -1.4; a <= 1.4; a += 0.25) {
-    if (Math.abs(a) < 0.45) continue;
-    const holeGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.5, 12);
-    holeGeo.rotateX(Math.PI / 2);
-    const hole = new THREE.Mesh(holeGeo, M.panelGap);
-    hole.position.set(Math.sin(a) * 1.95, 0, Math.cos(a) * 1.95);
-    hole.rotation.y = a;
-    G.add(hole);
+    const curve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0, dir * 1.25, 0.0),
+      new THREE.Vector3(0, dir * 1.65, -0.35),
+      new THREE.Vector3(0, dir * 1.55, -1.05),
+      new THREE.Vector3(0, dir * 0.95, -1.55),
+      new THREE.Vector3(0, dir * 0.25, -1.65)
+    ]);
+
+    return new THREE.ExtrudeGeometry(shape, { extrudePath: curve, steps: 36 });
   }
 
-  // Fecho Borboleta em Titânio Polido
-  const buckle = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.55, 0.3), M.titaniumPolished);
-  buckle.position.set(0, -0.05, -1.95);
-  G.add(buckle);
-  // Dobradiça do fecho
-  const bHinge = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.55, 12), M.chrome);
-  bHinge.rotation.x = Math.PI / 2;
-  bHinge.position.set(0, 0, -1.65);
-  G.add(bHinge);
+  // Metades superior e inferior da pulseira anatômica
+  const topStrap = new THREE.Mesh(createStrapHalf(true), M.rubber);
+  const botStrap = new THREE.Mesh(createStrapHalf(false), M.rubber);
+  G.add(topStrap);
+  G.add(botStrap);
 
-  // === Caixa Unibody com Lugs e Parafusos ===
-  // Corpo principal
-  const caseGeo = new THREE.BoxGeometry(1.9, 2.4, 0.68);
-  const caseBody = new THREE.Mesh(caseGeo, M.titaniumDark);
-  caseBody.position.set(0, 0, 1.95);
-  G.add(caseBody);
-
-  // Lugs de conexão à pulseira
+  // Adaptadores de Lug em Titânio (conexão mecânica com a caixa)
   for (const sy of [-1, 1]) {
-    const lugGeo = new THREE.BoxGeometry(1.65, 0.35, 0.5);
-    const lug = new THREE.Mesh(lugGeo, M.titaniumDark);
-    lug.position.set(0, sy * 1.35, 1.95);
-    G.add(lug);
-    // Pinos de mola dos lugs
-    for (const sx of [-0.7, 0.7]) {
-      const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.12, 10), M.titaniumPolished);
-      pin.rotation.z = Math.PI / 2;
-      pin.position.set(sx, sy * 1.35, 1.95);
-      G.add(pin);
+    const lugAdapter = new THREE.Mesh(new THREE.BoxGeometry(1.68, 0.18, 0.32), M.titaniumDark);
+    lugAdapter.position.set(0, sy * 1.25, 0);
+    G.add(lugAdapter);
+
+    const lugTrim = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.04, 0.34), M.titaniumPolished);
+    lugTrim.position.set(0, sy * 1.25, 0);
+    G.add(lugTrim);
+
+    // Botões de liberação rápida da pulseira
+    for (const sx of [-0.5, 0.5]) {
+      const releaseBtn = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.06, 12), M.titaniumPolished);
+      releaseBtn.rotation.x = Math.PI / 2;
+      releaseBtn.position.set(sx, sy * 1.25, -0.16);
+      G.add(releaseBtn);
     }
   }
 
-  // 4 Parafusos Torx nos Cantos
-  for (const [cx, cy] of [[-0.82, 1.08], [0.82, 1.08], [-0.82, -1.08], [0.82, -1.08]]) {
+  // Costelas ergonômicas transversais na pulseira superior
+  for (let i = 0; i < 5; i++) {
+    const a = 0.25 + i * 0.16;
+    const py = 1.35 + Math.sin(a * 1.8) * 0.35;
+    const pz = -0.15 - i * 0.28;
+    const rib = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.04, 0.025), M.titaniumDark);
+    rib.position.set(0, py, pz);
+    G.add(rib);
+  }
+
+  // Furos de ajuste na pulseira inferior
+  for (let i = 0; i < 6; i++) {
+    const py = -1.35 - Math.sin((0.2 + i * 0.14) * 1.8) * 0.32;
+    const pz = -0.2 - i * 0.24;
+    const pinHole = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.08, 0.03), M.panelGap);
+    pinHole.position.set(0, py, pz);
+    G.add(pinHole);
+  }
+
+  // Passadores da pulseira (Keepers)
+  for (const pz of [-1.45, -1.58]) {
+    const keeper = new THREE.Mesh(
+      new THREE.BoxGeometry(1.72, 0.12, 0.26),
+      M.rubber
+    );
+    keeper.position.set(0, -0.5, pz);
+    G.add(keeper);
+  }
+
+  // Fecho Borboleta em Titânio Polido (Clasp)
+  const claspGeo = new THREE.BoxGeometry(1.64, 0.45, 0.16);
+  const clasp = new THREE.Mesh(claspGeo, M.titaniumPolished);
+  clasp.position.set(0, 0, -1.65);
+  G.add(clasp);
+
+  // Botões laterais de liberação do fecho
+  for (const sx of [-1, 1]) {
+    const claspPusher = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.2, 0.1), M.chrome);
+    claspPusher.position.set(sx * 0.86, 0, -1.65);
+    G.add(claspPusher);
+  }
+
+  // === Caixa Unibody Central de Titânio usinado CNC ===
+  const caseGeo = new THREE.BoxGeometry(2.0, 2.4, 0.62);
+  const caseBody = new THREE.Mesh(caseGeo, M.titaniumDark);
+  caseBody.position.set(0, 0, 0);
+  G.add(caseBody);
+
+  // Bisel de Proteção Elevado com Chanfro em Titânio Polido
+  const bezel = new THREE.Mesh(new THREE.BoxGeometry(1.9, 2.3, 0.06), M.titaniumPolished);
+  bezel.position.set(0, 0, 0.32);
+  G.add(bezel);
+
+  // 4 Micro-Parafusos Torx nos Cantos do Bisel
+  for (const [cx, cy] of [[-0.85, 1.05], [0.85, 1.05], [-0.85, -1.05], [0.85, -1.05]]) {
     const s = makeScrew(M.chrome);
-    s.position.set(cx, cy, 2.3);
+    s.position.set(cx, cy, 0.35);
     G.add(s);
   }
 
-  // Bisel Polido com Chanfro 2D
-  const bezel = new THREE.Mesh(new THREE.BoxGeometry(1.8, 2.3, 0.06), M.titaniumPolished);
-  bezel.position.set(0, 0, 2.3);
-  G.add(bezel);
-
-  // Juntas de Painel
-  for (const cy of [-1.15, 1.15]) {
-    G.add(makePanelLine(1.85, 0.008, 0.7).translateY(cy).translateZ(1.95));
+  // Juntas de Painel CNC
+  for (const cy of [-1.12, 1.12]) {
+    G.add(makePanelLine(1.92, 0.008, 0.6).translateY(cy).translateZ(0));
   }
 
-  // === Tela OLED e Safira ===
+  // === Tela OLED Curva e Vidro de Safira ===
   const screenMesh = new THREE.Mesh(
-    new THREE.PlaneGeometry(1.6, 2.1),
+    new THREE.PlaneGeometry(1.68, 2.08),
     new THREE.MeshBasicMaterial({ map: screen.texture })
   );
-  screenMesh.position.set(0, 0, 2.34);
+  screenMesh.position.set(0, 0, 0.36);
   G.add(screenMesh);
 
-  const glass = new THREE.Mesh(new THREE.BoxGeometry(1.7, 2.2, 0.05), M.glassClear);
-  glass.position.set(0, 0, 2.38);
+  const glass = new THREE.Mesh(new THREE.BoxGeometry(1.78, 2.18, 0.05), M.glassClear);
+  glass.position.set(0, 0, 0.38);
   G.add(glass);
 
-  // === Coroa Digital Recartilhada ===
-  const crownGeo = new THREE.CylinderGeometry(0.22, 0.22, 0.4, 24);
+  // === Coroa Digital Recartilhada (Digital Crown) ===
+  const crownGeo = new THREE.CylinderGeometry(0.24, 0.24, 0.36, 24);
   crownGeo.rotateZ(Math.PI / 2);
   const crown = new THREE.Mesh(crownGeo, M.titaniumPolished);
-  crown.position.set(1.08, 0.5, 1.95);
+  crown.position.set(1.15, 0.45, 0);
   G.add(crown);
-  // Ranhuras de knurling
-  for (let i = 0; i < 16; i++) {
-    const a = (i / 16) * Math.PI * 2;
-    const knurl = new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.01, 0.38), M.panelGap);
-    knurl.position.set(1.08 + 0.2, 0.5 + Math.cos(a) * 0.22, 1.95 + Math.sin(a) * 0.22);
+
+  // Ranhuras de recartilhamento (Knurling)
+  for (let i = 0; i < 18; i++) {
+    const a = (i / 18) * Math.PI * 2;
+    const knurl = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.012, 0.34), M.panelGap);
+    knurl.position.set(1.15 + 0.18, 0.45 + Math.cos(a) * 0.24, Math.sin(a) * 0.24);
     G.add(knurl);
   }
-  // Anel neon da coroa
-  const crownRing = new THREE.Mesh(
-    new THREE.TorusGeometry(0.22, 0.035, 14, 24),
-    M.neonOrange
-  );
+  // Anel de status laranja neon da coroa
+  const crownRing = new THREE.Mesh(new THREE.TorusGeometry(0.24, 0.032, 14, 24), M.neonOrange);
   crownRing.rotation.y = Math.PI / 2;
-  crownRing.position.set(1.3, 0.5, 1.95);
+  crownRing.position.set(1.34, 0.45, 0);
   G.add(crownRing);
 
-  // Botão Secundário
-  const secBtn = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.55, 0.22), M.titaniumPolished);
-  secBtn.position.set(1.0, -0.42, 1.95);
+  // Botão Secundário Lateral Direito
+  const secBtn = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.55, 0.22), M.titaniumPolished);
+  secBtn.position.set(1.06, -0.42, 0);
   G.add(secBtn);
 
-  // Botão de Ação Laranja
-  const actBtn = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.7, 0.26), M.neonOrange);
-  actBtn.position.set(-1.0, 0.22, 1.95);
+  // Botão de Ação Laranja Internacional (Lado Esquerdo)
+  const actBtn = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.72, 0.26), M.neonOrange);
+  actBtn.position.set(-1.06, 0.25, 0);
   G.add(actBtn);
 
-  // === Traseira: Pinos Ouro, Sensores PPG, Porta USB-C ===
-  // Dome de cerâmica
-  const sensorDome = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.6, 0.7, 0.1, 28),
-    M.ceramic
-  );
+  // === Traseira Cerâmica: Pinos Pogo de Ouro 24k e Sensores PPG ===
+  const sensorDome = new THREE.Mesh(new THREE.CylinderGeometry(0.65, 0.75, 0.1, 28), M.ceramic);
   sensorDome.rotation.x = Math.PI / 2;
-  sensorDome.position.set(0, 0, 1.58);
+  sensorDome.position.set(0, 0, -0.34);
   G.add(sensorDome);
 
-  // 4 Pinos Pogo de Ouro 24k
+  // 4 Pinos Pogo banhados a ouro 24k para carregamento
   for (const p of [-0.24, -0.08, 0.08, 0.24]) {
-    const pin = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.032, 0.032, 0.08, 12),
-      M.gold
-    );
+    const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.08, 12), M.gold);
     pin.rotation.x = Math.PI / 2;
-    pin.position.set(p, 0.42, 1.55);
+    pin.position.set(p, 0.42, -0.38);
     G.add(pin);
   }
 
-  // 4 LEDs PPG biométricos
+  // 4 Diodos ópticos PPG biométricos (Cardíaco / SpO2)
   for (let i = 0; i < 4; i++) {
     const a = (i / 4) * Math.PI * 2;
     const led = new THREE.Mesh(
-      new THREE.SphereGeometry(0.06, 12, 12),
+      new THREE.SphereGeometry(0.065, 12, 12),
       i % 2 === 0 ? M.neonGreen : M.neonRed
     );
-    led.position.set(Math.cos(a) * 0.28, Math.sin(a) * 0.28, 1.52);
+    led.position.set(Math.cos(a) * 0.28, Math.sin(a) * 0.28, -0.38);
     G.add(led);
   }
 
-  // Porta USB-C
-  const usbC = makePanelLine(0.22, 0.08, 0.06);
-  usbC.position.set(0, -1.25, 1.95);
-  G.add(usbC);
-
-  // Speaker grille na base
+  // Grelha de microfone e alto-falante lateral
   const spkGrille = new THREE.Mesh(
-    new THREE.PlaneGeometry(0.5, 0.08),
+    new THREE.PlaneGeometry(0.42, 0.08),
     new THREE.MeshStandardMaterial({ map: createMicroGrilleTexture(), metalness: 0.7, roughness: 0.3 })
   );
-  spkGrille.position.set(0, -1.18, 2.3);
+  spkGrille.rotation.y = -Math.PI / 2;
+  spkGrille.position.set(-1.01, -0.45, 0);
   G.add(spkGrille);
 
-  addContactShadow(G, -1.8, 2.8, 0.5);
+  addContactShadow(G, -1.85, 3.2, 0.45);
 
   return {
     group: G,
-    cameraPos: [0, 1.2, 5.6],
+    cameraPos: [0, 0.3, 5.0],
     update(t, fx) {
-      G.position.y = Math.sin(t * 2) * 0.04;
+      G.position.y = Math.sin(t * 2) * 0.035;
       if (fx) {
-        caseBody.position.x = Math.sin(t * 40) * 0.012;
+        caseBody.position.x = Math.sin(t * 40) * 0.008;
         screen.draw(t);
         screen.texture.needsUpdate = true;
       }
